@@ -102,6 +102,9 @@
   stroke: #666;
   shape-rendering: crispEdges;
 }
+.outerwrapper .chart .axis .tick.major {
+  stroke-dasharray: 2, 2;
+}
 .outerwrapper .chart text {
   font-family: sans-serif;
   fill: #666;

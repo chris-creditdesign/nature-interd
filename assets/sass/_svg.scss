@@ -8,6 +8,10 @@
 			shape-rendering: crispEdges;
 		}
 
+		.tick.major {
+			stroke-dasharray: 2, 2;
+		}
+
 	}
 
 	text {

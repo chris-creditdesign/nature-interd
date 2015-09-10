@@ -26,6 +26,11 @@ function buildParams (argument) {
 		darkGrey: "#333"		
 	};
 
+	params.key = {
+		xAxisLabel: "References to outside disciplines",
+		yAxisLabel: "Citations from outside disciplines"
+	};
+
 	/*	Margin, Width and height */
 	params.margin = {top: 20, right: 20, bottom: 50, left: 50};
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
