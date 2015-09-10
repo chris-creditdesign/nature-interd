@@ -31,4 +31,6 @@ Type `grunt` to automatically watch for changes and concat a version of `index.h
 8: OutSpecCit
 9: OutDiscCit
 
-	csvcut -c 1,2,3,6,9 data/latestdata.csv > build/data/interd-data.csv
+csvgrep -c 1 -m "Professional Fields" -i data/latestdata.csv |
+csvgrep -c 1 -m "All subjects" -i | 
+csvcut -c 1,2,3,6,9 > build/data/interd-data.csv

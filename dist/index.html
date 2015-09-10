@@ -95,9 +95,27 @@
 .outerwrapper input[type=range]:focus::-ms-thumb {
   border-color: skyblue;
 }
+.outerwrapper .chart {
+  position: relative;
+}
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
+.outerwrapper .chart text {
+  font-family: sans-serif;
+  fill: #666;
+  font-size: 13px;
+  shape-rendering: crispEdges;
+}
+.outerwrapper .chart circle {
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
 
 </style>
-<div class="outerwrapper">
+<div class="outerwrapper" id="interd-graphic">
 	<h2>Interdisciplinary headline</h2>
 
 	<div class="chart"></div>
@@ -107,47 +125,225 @@
 <!--[if gt IE 8]><!-->
 <script type="text/javascript">
 function buildData (data) {
-	// body...
-	console.log(blap);
+
+	var disciplineArray = [];
+
+	data.forEach(function (element, array, index) {
+		element.ref = parseFloat(element.OutDiscRef);
+		element.cit = parseFloat(element.OutDiscCit);
+
+		if (disciplineArray.indexOf(element.Discipline) === -1) {
+			disciplineArray.push(element.Discipline);
+		}
+	});
+
+	var nest = d3.nest()
+		.key(function (d) {
+			return d.Year;
+		})
+		.entries(data);
 
 	return {
-		data: data
+		data: nest,
+		discipline: disciplineArray
 	};
 }
-console.log("This is build widget");
+function buildParams (argument) {
+	var params = {};
+
+	params.colour =  [
+		"#e30513",  /* Arts */
+		"#e84d0e",  /* Biology */
+		"#f18700",  /* Biomedical Research */
+		"#fbb900",  /* Chemistry */
+		"#ffed00",  /* Clinical Medicine */
+		"#d3d700",  /* Earth and Space */
+		"#009640",  /* Engineering and Technology */
+		"#79c6bf",  /* Health */
+		"#009dd4",  /* Humanities */
+		"#544595",  /* Mathematics */
+		"#951b81",  /* Physics */
+		"#b7195d",  /* Psychology */
+		"#a99892" /* Social Sciences */
+
+		// Need two more
+	];
+
+	params.uiColour = {
+		veryLightGrey: "#ddd",
+		lightGrey: "#999",
+		grey: "#666",
+		darkGrey: "#333"		
+	};
+
+	/*	Margin, Width and height */
+	params.margin = {top: 20, right: 20, bottom: 50, left: 50};
+	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
+	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
+
+	params.year = 0;
+
+	return params;
+}
+BuildWidget.prototype.buildAxes = function() {
+
+	this.yAxis = d3.svg.axis()
+		.scale(this.yScale)
+		.tickSize(-this.params.width ,0)
+		.orient("left");
+
+	this.xAxis = d3.svg.axis()
+		.scale(this.xScale)
+		.tickSize(-this.params.height ,0)
+		.orient("bottom");
+
+	this.svg.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(" +this.params.margin.left + "," + this.params.margin.top + ")")
+		.call(this.yAxis);
+
+	this.svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")")
+		.call(this.xAxis);
+};
+BuildWidget.prototype.buildGraphic = function() {
+	this.svg = d3.select(this.target + "> .chart").append("svg")
+		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
+		.attr("height", this.params.height + this.params.margin.top + this.params.margin.bottom);
+
+	var clip = this.svg.append("defs").append("svg:clipPath")
+					.attr("id", "clip")
+				  .append("svg:rect")
+					.attr("x", 0)
+					.attr("y", 0)
+					.attr("width", this.params.width)
+					.attr("height", this.params.height);
+
+	this.scatterGroup = this.svg.append("g")
+							.attr("class","scatterGroup")
+							.attr("clip-path", "url(#clip)")
+							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
+};
+BuildWidget.prototype.buildInput = function() {
+	var self = this;
+
+	this.svg = d3.select(this.target + "> .widget-selector")
+				.append("input")
+				.attr("type","range")
+				.attr("min", 0)
+				.attr("max", (this.data.data.length -1))
+				.attr("step", 1)
+				.attr("value", 0)
+				.on("input", function() {
+					self.params.year = this.value;
+					self.updateScatterPlot();
+				});				
+};
+
+
+// var outerwrapper = d3.select(".outerwrapper");
+
+/*	makeRange()
+	Append an input[type="range"] and call drawFrame on change */
+// function makeRange () {
+// 	range = outerwrapper.select(".widget-selector")
+
+	/*	selection.on("input") doesn't seem to work in ie
+		repeating the call to drawFrame() here on slide end */
+// 	jQuery(".outerwrapper input[type='range']").click(function(){
+// 		this.blur();
+// 		this.focus();
+// 		drawFrame(this.value);
+// 	});
+// }
+
+// makeRange();
+BuildWidget.prototype.buildScales = function(first_argument) {
+
+	this.yScale = d3.scale.linear()
+		.range([this.params.height, 0])
+		.domain([0,1]);
+
+	this.xScale = d3.scale.linear()
+		.range([0, this.params.width])
+		.domain([0,1]);
+
+	this.colourScale = d3.scale.ordinal()
+		.domain(this.data.discipline)
+		.range(this.params.colour);
+
+};
+BuildWidget.prototype.enterScatterPlot = function() {
+	var self = this;
+	
+	this.scatterGroup.selectAll("circle")
+		.data(this.data.data[this.params.year].values, function (d) {
+			return d.Specialty;
+		})
+		.enter()
+	  .append("circle")
+		.attr("cx", function (d) {
+			return self.xScale(d.ref);
+		})
+		.attr("cy", function (d) {
+			return self.yScale(d.cit);
+		})
+		.attr("r", 5)
+		.attr("fill", function (d) {
+			return self.colourScale(d.Specialty);
+		});
+};
+
+BuildWidget.prototype.updateScatterPlot = function() {
+	var self = this;
+
+	this.scatterGroup.selectAll("circle")
+		.data(this.data.data[this.params.year].values, function (d) {
+			return d.Specialty;
+		})
+		.attr("cx", function (d) {
+			return self.xScale(d.ref);
+		})
+		.attr("cy", function (d) {
+			return self.yScale(d.cit);
+		});
+};
+function BuildWidget (target, params, data) {
+	this.target = target;
+	this.params = params;
+	this.data = data;
+}
 (function() {
 	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	var dataurl = "/data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
 		$.getScript(d3url, function() {
+			d3.csv(dataurl, function (error, d) {
+				
+				if (error) {
+					// $(".status-message").css("display","block");
+					console.log(error);
+				} else {
+				
+					var data = buildData(d);
 
-			var outerwrapper = d3.select(".outerwrapper");
+					var params = buildParams();
 
-			/*	makeRange()
-				Append an input[type="range"] and call drawFrame on change */
-			function makeRange () {
-				range = outerwrapper.select(".widget-selector")
-											.append("input")
-											.attr("type","range")
-											.attr("min", 0)
-											.attr("max", 10)
-											.attr("step", 1)
-											.attr("value", 0)
-											.on("input", function() {
-												console.log(this.value);
-											});				
+					var widget = new BuildWidget("#interd-graphic", params, data);
 
-				/*	selection.on("input") doesn't seem to work in ie
-					repeating the call to drawFrame() here on slide end */
-				// jQuery(".outerwrapper input[type='range']").click(function(){
-				// 	this.blur();
-				// 	this.focus();
-				// 	drawFrame(this.value);
-				// });
-			}
+					widget.buildGraphic();
+					widget.buildScales();
+					widget.buildAxes();
+					widget.enterScatterPlot();
+					widget.buildInput();
 
-			makeRange();
+					console.log(widget);
+
+				}
+			});
 
 		});
 	};

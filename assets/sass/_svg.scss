@@ -1,0 +1,24 @@
+.chart {
+	position: relative;
+
+	.axis {
+		path, line {
+			fill: none;
+			stroke: #666;
+			shape-rendering: crispEdges;
+		}
+
+	}
+
+	text {
+		font-family: sans-serif;
+		fill: #666;
+		font-size: 13px;
+		shape-rendering: crispEdges;
+	}
+
+	circle {
+		-webkit-transition: opacity 0.2s ease;
+		transition: opacity 0.2s ease;
+	}
+}

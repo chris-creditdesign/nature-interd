@@ -1,36 +1,33 @@
 (function() {
 	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	var dataurl = "/data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
 		$.getScript(d3url, function() {
+			d3.csv(dataurl, function (error, d) {
+				
+				if (error) {
+					// $(".status-message").css("display","block");
+					console.log(error);
+				} else {
+				
+					var data = buildData(d);
 
-			var outerwrapper = d3.select(".outerwrapper");
+					var params = buildParams();
 
-			/*	makeRange()
-				Append an input[type="range"] and call drawFrame on change */
-			function makeRange () {
-				range = outerwrapper.select(".widget-selector")
-											.append("input")
-											.attr("type","range")
-											.attr("min", 0)
-											.attr("max", 10)
-											.attr("step", 1)
-											.attr("value", 0)
-											.on("input", function() {
-												console.log(this.value);
-											});				
+					var widget = new BuildWidget("#interd-graphic", params, data);
 
-				/*	selection.on("input") doesn't seem to work in ie
-					repeating the call to drawFrame() here on slide end */
-				// jQuery(".outerwrapper input[type='range']").click(function(){
-				// 	this.blur();
-				// 	this.focus();
-				// 	drawFrame(this.value);
-				// });
-			}
+					widget.buildGraphic();
+					widget.buildScales();
+					widget.buildAxes();
+					widget.enterScatterPlot();
+					widget.buildInput();
 
-			makeRange();
+					console.log(widget);
+
+				}
+			});
 
 		});
 	};

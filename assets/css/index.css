@@ -94,3 +94,21 @@
 .outerwrapper input[type=range]:focus::-ms-thumb {
   border-color: skyblue;
 }
+.outerwrapper .chart {
+  position: relative;
+}
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
+.outerwrapper .chart text {
+  font-family: sans-serif;
+  fill: #666;
+  font-size: 13px;
+  shape-rendering: crispEdges;
+}
+.outerwrapper .chart circle {
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
