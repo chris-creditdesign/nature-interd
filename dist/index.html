@@ -1,0 +1,164 @@
+<style scoped>
+.status-message {
+  border: 1px solid #c00;
+  background: #fac7c7;
+  padding: 10px;
+}
+
+.outerwrapper {
+  width: 100%;
+  min-height: 900px;
+  position: relative;
+  border: 1px solid #c8c7cf;
+}
+.outerwrapper h2, .outerwrapper h3, .outerwrapper p {
+  padding: 10px 10px 0 10px;
+  margin: 0;
+}
+.outerwrapper .widget-selector {
+  padding: 10px 20px;
+}
+.outerwrapper input[type=range] {
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+.outerwrapper input[type=range]:focus {
+  outline: none;
+}
+.outerwrapper input[type=range]::-moz-focus-outer {
+  border: 0;
+}
+.outerwrapper input[type=range]::-webkit-slider-runnable-track {
+  height: 8px;
+  background: #999;
+  border-radius: 4px;
+}
+.outerwrapper input[type=range]::-webkit-slider-thumb {
+  border: 4px solid #fff;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  background: #333;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7.6px;
+  -webkit-transition: border-color 200ms;
+          transition: border-color 200ms;
+}
+.outerwrapper input[type=range]:focus::-webkit-slider-thumb {
+  border-color: skyblue;
+}
+.outerwrapper input[type=range]::-moz-range-track {
+  height: 8px;
+  background: #999;
+  border-radius: 4px;
+}
+.outerwrapper input[type=range]::-moz-range-thumb {
+  border: 4px solid #fff;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #333;
+  cursor: pointer;
+  transition: border-color 200ms;
+}
+.outerwrapper input[type=range]:focus::-moz-range-thumb {
+  border-color: skyblue;
+}
+.outerwrapper input[type=range]::-ms-track {
+  width: 100%;
+  height: 8px;
+  background: transparent;
+  border-color: transparent;
+  border-width: 20px 0;
+  color: transparent;
+}
+.outerwrapper input[type=range]::-ms-fill-lower {
+  background: #999;
+  border: 0px solid #000101;
+  border-radius: 50px;
+}
+.outerwrapper input[type=range]::-ms-fill-upper {
+  background: #999;
+  border: 0px solid #000101;
+  border-radius: 50px;
+}
+.outerwrapper input[type=range]::-ms-thumb {
+  border: 4px solid #fff;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #333;
+  transition: border-color 200ms;
+}
+.outerwrapper input[type=range]:focus::-ms-thumb {
+  border-color: skyblue;
+}
+
+</style>
+<div class="outerwrapper">
+	<h2>Interdisciplinary headline</h2>
+
+	<div class="chart"></div>
+
+	<div class="widget-selector"></div>
+</div>
+<!--[if gt IE 8]><!-->
+<script type="text/javascript">
+function buildData (data) {
+	// body...
+	console.log(blap);
+
+	return {
+		data: data
+	};
+}
+console.log("This is build widget");
+(function() {
+	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+
+	var init = function($) {
+		/*	Load D3 */
+		$.getScript(d3url, function() {
+
+			var outerwrapper = d3.select(".outerwrapper");
+
+			/*	makeRange()
+				Append an input[type="range"] and call drawFrame on change */
+			function makeRange () {
+				range = outerwrapper.select(".widget-selector")
+											.append("input")
+											.attr("type","range")
+											.attr("min", 0)
+											.attr("max", 10)
+											.attr("step", 1)
+											.attr("value", 0)
+											.on("input", function() {
+												console.log(this.value);
+											});				
+
+				/*	selection.on("input") doesn't seem to work in ie
+					repeating the call to drawFrame() here on slide end */
+				// jQuery(".outerwrapper input[type='range']").click(function(){
+				// 	this.blur();
+				// 	this.focus();
+				// 	drawFrame(this.value);
+				// });
+			}
+
+			makeRange();
+
+		});
+	};
+
+	setTimeout(function() {
+		if (typeof jQuery !== 'undefined'){
+			init(jQuery);
+		} else {
+			setTimeout(arguments.callee, 60);
+		}
+	}, 60);
+})();
+</script>
+<!--<![endif]-->

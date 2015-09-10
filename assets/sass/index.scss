@@ -1,0 +1,20 @@
+
+.status-message {
+	border: 1px solid #c00;
+	background: #fac7c7;
+	padding: 10px;
+}
+
+
+.outerwrapper {
+
+	@import 'typography';
+	@import 'input-range';
+
+	width: 100%;
+	min-height: 900px;
+	position: relative;
+	border: 1px solid #c8c7cf;
+
+} // outerwrapper
+
