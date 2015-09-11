@@ -31,6 +31,12 @@
 					console.log(widget);
 
 					$(".outerwrapper #key input").change(function () {
+						if ($(this).val() === "all") {
+
+							thisProp = $(this).prop("checked");
+							$(".outerwrapper #key input").prop("checked", thisProp);	
+						}
+
 						widget.updateView();
 					});
 

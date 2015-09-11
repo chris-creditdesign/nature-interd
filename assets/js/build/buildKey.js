@@ -1,10 +1,17 @@
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
 
+	var extendedDiscipline = ["All"];
+	for (var i = 0; i < this.data.discipline.length; i++) {
+		extendedDiscipline.push(this.data.discipline[i]);
+	}
+
+	console.log(self.colourScale("After"));
+
 	d3.select(target)
 	  .append("ul")
 		.selectAll("li")
-		.data(self.data.discipline)
+		.data(extendedDiscipline)
 		.enter()
 	  .append("li")
 		.attr("class", "palette")
@@ -18,6 +25,10 @@ BuildWidget.prototype.buildColourList = function (target) {
 			return innerHTML;
 		})
 		.style("border-color", function(d) {
-			return self.colourScale(d);
+			if (d === "All") {
+				return self.params.uiColour.lightGrey;
+			} else {
+				return self.colourScale(d);
+			}
 		});
 };
