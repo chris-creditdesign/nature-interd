@@ -1,4 +1,4 @@
-.chart {
+.chart, .widget-selector {
 	position: relative;
 
 	.axis {
@@ -8,9 +8,7 @@
 			shape-rendering: crispEdges;
 		}
 
-		.tick.major {
-			stroke-dasharray: 2, 2;
-		}
+
 
 	}
 
@@ -24,5 +22,11 @@
 	circle {
 		-webkit-transition: opacity 0.2s ease;
 		transition: opacity 0.2s ease;
+	}
+}
+
+.chart {
+	.tick.major {
+			stroke-dasharray: 2, 2;
 	}
 }

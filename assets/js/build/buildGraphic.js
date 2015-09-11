@@ -15,4 +15,9 @@ BuildWidget.prototype.buildGraphic = function() {
 							.attr("class","scatterGroup")
 							.attr("clip-path", "url(#clip)")
 							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
+
+	this.sliderSvg = d3.select(this.target + "> .widget-selector > .widget-scale")
+		.append("svg")
+		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
+		.attr("height", this.params.sliderHeight);
 };

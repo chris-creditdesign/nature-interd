@@ -14,13 +14,15 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .widget-selector {
-  padding: 10px 20px;
+.outerwrapper .widget-scale, .outerwrapper .widget-slider {
+  position: absolute;
+  top: 0;
+}
+.outerwrapper .widget-scale {
+  pointer-events: none;
 }
 .outerwrapper input[type=range] {
   -webkit-appearance: none;
-  margin: 10px 0;
-  width: 100%;
 }
 .outerwrapper input[type=range]:focus {
   outline: none;
@@ -65,53 +67,27 @@
 .outerwrapper input[type=range]:focus::-moz-range-thumb {
   border-color: skyblue;
 }
-.outerwrapper input[type=range]::-ms-track {
-  width: 100%;
-  height: 8px;
-  background: transparent;
-  border-color: transparent;
-  border-width: 20px 0;
-  color: transparent;
+.outerwrapper input[type=range]::-ms-tooltip {
+  display: none;
 }
-.outerwrapper input[type=range]::-ms-fill-lower {
-  background: #999;
-  border: 0px solid #000101;
-  border-radius: 50px;
-}
-.outerwrapper input[type=range]::-ms-fill-upper {
-  background: #999;
-  border: 0px solid #000101;
-  border-radius: 50px;
-}
-.outerwrapper input[type=range]::-ms-thumb {
-  border: 4px solid #fff;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #333;
-  transition: border-color 200ms;
-}
-.outerwrapper input[type=range]:focus::-ms-thumb {
-  border-color: skyblue;
-}
-.outerwrapper .chart {
+.outerwrapper .chart, .outerwrapper .widget-selector {
   position: relative;
 }
-.outerwrapper .chart .axis path, .outerwrapper .chart .axis line {
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-selector .axis path, .outerwrapper .widget-selector .axis line {
   fill: none;
   stroke: #666;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart .axis .tick.major {
-  stroke-dasharray: 2, 2;
-}
-.outerwrapper .chart text {
+.outerwrapper .chart text, .outerwrapper .widget-selector text {
   font-family: sans-serif;
   fill: #666;
   font-size: 13px;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart circle {
+.outerwrapper .chart circle, .outerwrapper .widget-selector circle {
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
+}
+.outerwrapper .chart .tick.major {
+  stroke-dasharray: 2, 2;
 }

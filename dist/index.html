@@ -15,13 +15,15 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .widget-selector {
-  padding: 10px 20px;
+.outerwrapper .widget-scale, .outerwrapper .widget-slider {
+  position: absolute;
+  top: 0;
+}
+.outerwrapper .widget-scale {
+  pointer-events: none;
 }
 .outerwrapper input[type=range] {
   -webkit-appearance: none;
-  margin: 10px 0;
-  width: 100%;
 }
 .outerwrapper input[type=range]:focus {
   outline: none;
@@ -66,55 +68,29 @@
 .outerwrapper input[type=range]:focus::-moz-range-thumb {
   border-color: skyblue;
 }
-.outerwrapper input[type=range]::-ms-track {
-  width: 100%;
-  height: 8px;
-  background: transparent;
-  border-color: transparent;
-  border-width: 20px 0;
-  color: transparent;
+.outerwrapper input[type=range]::-ms-tooltip {
+  display: none;
 }
-.outerwrapper input[type=range]::-ms-fill-lower {
-  background: #999;
-  border: 0px solid #000101;
-  border-radius: 50px;
-}
-.outerwrapper input[type=range]::-ms-fill-upper {
-  background: #999;
-  border: 0px solid #000101;
-  border-radius: 50px;
-}
-.outerwrapper input[type=range]::-ms-thumb {
-  border: 4px solid #fff;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #333;
-  transition: border-color 200ms;
-}
-.outerwrapper input[type=range]:focus::-ms-thumb {
-  border-color: skyblue;
-}
-.outerwrapper .chart {
+.outerwrapper .chart, .outerwrapper .widget-selector {
   position: relative;
 }
-.outerwrapper .chart .axis path, .outerwrapper .chart .axis line {
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-selector .axis path, .outerwrapper .widget-selector .axis line {
   fill: none;
   stroke: #666;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart .axis .tick.major {
-  stroke-dasharray: 2, 2;
-}
-.outerwrapper .chart text {
+.outerwrapper .chart text, .outerwrapper .widget-selector text {
   font-family: sans-serif;
   fill: #666;
   font-size: 13px;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart circle {
+.outerwrapper .chart circle, .outerwrapper .widget-selector circle {
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
+}
+.outerwrapper .chart .tick.major {
+  stroke-dasharray: 2, 2;
 }
 
 </style>
@@ -123,21 +99,42 @@
 
 	<div class="chart"></div>
 
-	<div class="widget-selector"></div>
+	<div class="widget-selector">
+		
+		<div class="widget-scale"></div>
+		<form class="widget-slider"></form>
+
+	</div>
+
 </div>
+
 <!--[if gt IE 8]><!-->
 <script type="text/javascript">
 function buildData (data) {
 
 	var disciplineArray = [];
+	var yearArray = [];
 
-	data.forEach(function (element, array, index) {
+	data.forEach(function (element, index, array) {
 		element.ref = parseFloat(element.OutDiscRef);
 		element.cit = parseFloat(element.OutDiscCit);
 
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);
 		}
+
+		if (yearArray.indexOf(element.Year) === -1) {
+			yearArray.push(element.Year);
+		}
+	});
+
+	yearArray.forEach(function (element, index, array) {
+		yearArray[index] = parseInt(element, 10);
+
+	});
+
+	yearArray.sort(function (a, b) {
+		return a - b;
 	});
 
 	var nest = d3.nest()
@@ -148,7 +145,8 @@ function buildData (data) {
 
 	return {
 		data: nest,
-		discipline: disciplineArray
+		discipline: disciplineArray,
+		years: yearArray
 	};
 }
 function buildParams (argument) {
@@ -189,6 +187,8 @@ function buildParams (argument) {
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
 	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
 
+	params.sliderHeight = 60;
+
 	params.year = 0;
 
 	return params;
@@ -205,6 +205,12 @@ BuildWidget.prototype.buildAxes = function() {
 		.scale(this.xScale)
 		.tickSize(-this.params.height ,0)
 		.orient("bottom");
+
+	this.yearAxis = d3.svg.axis()
+		.scale(this.yearScale)
+		.tickSize(20, 3)
+		.orient("bottom")
+		.tickFormat(d3.format("d"));
 
 	this.svg.append("g")
 		.attr("class", "y axis")
@@ -231,6 +237,11 @@ BuildWidget.prototype.buildAxes = function() {
 		.text(function () {
 				return self.params.key.xAxisLabel;
 		});
+
+	this.sliderSvg.append("g")
+		.attr("class", "axis")
+		.attr("transform","translate(" + this.params.margin.left + ",10)")
+		.call(this.yearAxis);
 };
 BuildWidget.prototype.buildGraphic = function() {
 	this.svg = d3.select(this.target + "> .chart").append("svg")
@@ -249,23 +260,49 @@ BuildWidget.prototype.buildGraphic = function() {
 							.attr("class","scatterGroup")
 							.attr("clip-path", "url(#clip)")
 							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
+
+	this.sliderSvg = d3.select(this.target + "> .widget-selector > .widget-scale")
+		.append("svg")
+		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
+		.attr("height", this.params.sliderHeight);
 };
 BuildWidget.prototype.buildInput = function() {
 	var self = this;
 
-	this.svg = d3.select(this.target + "> .widget-selector")
-				.append("input")
+	this.slider = d3.select(this.target + "> .widget-selector > .widget-slider")
+		.style("padding", ("0 " + (this.params.margin.right - 10) + "px 0 " + (this.params.margin.left - 10) + "px"));
+
+	this.slider.append("input")
 				.attr("type","range")
-				.attr("min", 0)
-				.attr("max", (this.data.data.length -1))
+				.attr("name","year")
+				.attr("min", this.data.years[0])
+				.attr("max", (this.data.years[this.data.years.length - 1]))
 				.attr("step", 1)
 				.attr("value", 0)
+				.style("width", (this.params.width + 20) + "px")
+				// .style("margin-top", this.params.sliderHeight + "px")
 				.on("input", function() {
-					self.params.year = this.value;
+					self.params.year = (this.value - self.data.years[0]);
 					self.updateScatterPlot();
-				});				
+				});
+
+	/*	selection.on("input") doesn't seem to work in ie
+		repeating the call to drawFrame() here on slide end */
+	jQuery(".outerwrapper input[type='range']").click(function(){
+		this.blur();
+		this.focus();
+		self.params.year = (this.value - self.data.years[0]);
+		self.updateScatterPlot();
+	});
+	
 };
 
+
+	// <form oninput="result.value=parseInt(a.value)+parseInt(b.value)">
+	// 	<input type="range" name="b" value="50" /> +
+	// 	<input type="number" name="a" value="10" /> =
+	// 	<output name="result"></output>
+	// </form>
 
 // var outerwrapper = d3.select(".outerwrapper");
 
@@ -274,13 +311,6 @@ BuildWidget.prototype.buildInput = function() {
 // function makeRange () {
 // 	range = outerwrapper.select(".widget-selector")
 
-	/*	selection.on("input") doesn't seem to work in ie
-		repeating the call to drawFrame() here on slide end */
-// 	jQuery(".outerwrapper input[type='range']").click(function(){
-// 		this.blur();
-// 		this.focus();
-// 		drawFrame(this.value);
-// 	});
 // }
 
 // makeRange();
@@ -295,8 +325,12 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 		.domain([0,1]);
 
 	this.colourScale = d3.scale.ordinal()
-		.domain(this.data.discipline)
-		.range(this.params.colour);
+		.range(this.params.colour)
+		.domain(this.data.discipline);
+
+	this.yearScale = d3.scale.linear()
+		.range([0, this.params.width])
+		.domain([d3.min(this.data.years),d3.max(this.data.years)]);
 
 };
 BuildWidget.prototype.enterScatterPlot = function() {

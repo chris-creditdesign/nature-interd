@@ -9,7 +9,11 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 		.domain([0,1]);
 
 	this.colourScale = d3.scale.ordinal()
-		.domain(this.data.discipline)
-		.range(this.params.colour);
+		.range(this.params.colour)
+		.domain(this.data.discipline);
+
+	this.yearScale = d3.scale.linear()
+		.range([0, this.params.width])
+		.domain([d3.min(this.data.years),d3.max(this.data.years)]);
 
 };

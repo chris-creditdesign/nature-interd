@@ -36,6 +36,8 @@ function buildParams (argument) {
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
 	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
 
+	params.sliderHeight = 60;
+
 	params.year = 0;
 
 	return params;
