@@ -1,0 +1,29 @@
+.widget-tooltip {
+	position: absolute;
+	width: 200px;
+	height: auto;
+	padding: 6px 10px 6px 15px;
+	color: #ccc;
+	background-color: #333;
+	pointer-events: none;
+	border-radius:5px;
+	font-size: 0.8em;
+	line-height: 1.4em;
+	opacity: 1;
+	-webkit-transition: opacity 0.2s ease;
+	transition: opacity 0.2s ease;
+
+	p {
+		padding: 0;
+	}
+
+	span {
+		font-weight: bold;
+		color: #fff;
+	}
+}
+
+.hidden {
+	opacity: 0;
+	pointer-events: none;
+}

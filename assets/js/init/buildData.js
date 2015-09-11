@@ -4,8 +4,8 @@ function buildData (data) {
 	var yearArray = [];
 
 	data.forEach(function (element, index, array) {
-		element.ref = parseFloat(element.OutDiscRef);
-		element.cit = parseFloat(element.OutDiscCit);
+		element.ref = Math.round(parseFloat(element.OutDiscRef) * 100);
+		element.cit = Math.round(parseFloat(element.OutDiscCit) * 100);
 
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);

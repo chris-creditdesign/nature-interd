@@ -141,12 +141,47 @@
 .outerwrapper .chart .tick.major {
   stroke-dasharray: 2, 2;
 }
+.outerwrapper .chart .scatterGroup circle {
+  cursor: pointer;
+}
+.outerwrapper .widget-tooltip {
+  position: absolute;
+  width: 200px;
+  height: auto;
+  padding: 6px 10px 6px 15px;
+  color: #ccc;
+  background-color: #333;
+  pointer-events: none;
+  border-radius: 5px;
+  font-size: 0.8em;
+  line-height: 1.4em;
+  opacity: 1;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+.outerwrapper .widget-tooltip p {
+  padding: 0;
+}
+.outerwrapper .widget-tooltip span {
+  font-weight: bold;
+  color: #fff;
+}
+.outerwrapper .hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 </style>
 <div class="outerwrapper" id="interd-graphic">
 	<h2>Interdisciplinary headline</h2>
 
-	<div class="chart"></div>
+	<div class="chart">
+		<div class="widget-tooltip hidden" id="widget-tooltip">
+			<p id="name"></p>
+			<p>References: <span id="ref">0</span></p>
+			<p>Citations: <span id="cit">0</span></p>
+		</div>
+	</div>
 
 	<div class="widget-selector">
 		
@@ -165,8 +200,8 @@ function buildData (data) {
 	var yearArray = [];
 
 	data.forEach(function (element, index, array) {
-		element.ref = parseFloat(element.OutDiscRef);
-		element.cit = parseFloat(element.OutDiscCit);
+		element.ref = Math.round(parseFloat(element.OutDiscRef) * 100);
+		element.cit = Math.round(parseFloat(element.OutDiscCit) * 100);
 
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);
@@ -227,8 +262,8 @@ function buildParams (argument) {
 	};
 
 	params.key = {
-		xAxisLabel: "References to outside disciplines",
-		yAxisLabel: "Citations from outside disciplines"
+		xAxisLabel: "References to outside disciplines (%)",
+		yAxisLabel: "Citations from outside disciplines (%)"
 	};
 
 	/*	Margin, Width and height */
@@ -367,11 +402,11 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 
 	this.yScale = d3.scale.linear()
 		.range([this.params.height, 0])
-		.domain([0,1]);
+		.domain([0,100]);
 
 	this.xScale = d3.scale.linear()
 		.range([0, this.params.width])
-		.domain([0,1]);
+		.domain([0,100]);
 
 	this.colourScale = d3.scale.ordinal()
 		.range(this.params.colour)
@@ -398,6 +433,8 @@ BuildWidget.prototype.enterScatterPlot = function() {
 			return self.yScale(d.cit);
 		})
 		.attr("r", 5)
+		.attr("stroke", self.params.uiColour.darkGrey)
+		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
 			return self.colourScale(d.Specialty);
 		});
@@ -416,6 +453,43 @@ BuildWidget.prototype.updateScatterPlot = function() {
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
 		});
+};
+BuildWidget.prototype.buildTooltip = function() {
+	var self = this;
+
+	this.scatterGroup.selectAll("circle")
+		.on("mouseover", function (d) {
+			var myCircle = d3.select(this);
+
+			myCircle.attr("stroke-width", 2);
+
+			var tooltipWidth = parseInt(d3.select("#widget-tooltip").style("padding-left"),10) + parseInt(d3.select("#widget-tooltip").style("width"),10) + parseInt(d3.select("#widget-tooltip").style("padding-right"),10);
+
+			var top = (parseFloat(myCircle.attr("cy")) + self.params.margin.top);
+			var left = (parseFloat(myCircle.attr("cx")) + self.params.margin.left);
+
+			if ( parseFloat(myCircle.attr("cx")) > (self.params.width / 2) ) {
+				left -= tooltipWidth;
+			}
+
+			d3.select("#widget-tooltip")
+				.style("top",  top + "px")
+				.style("left", left + "px")
+				.classed("hidden", false);
+
+			d3.select("#name").text(d.Specialty);
+			d3.select("#cit").text(d.cit + "%");
+			d3.select("#ref").text(d.ref + "%");
+
+		})
+		.on("mouseout", function (d) {
+			d3.select(this).attr("stroke-width", 0);
+			self.hideTooltip();
+		});
+};
+
+BuildWidget.prototype.hideTooltip = function () {
+	d3.select("#widget-tooltip").classed("hidden", true);
 };
 function BuildWidget (target, params, data) {
 	this.target = target;
@@ -447,6 +521,7 @@ function BuildWidget (target, params, data) {
 					widget.buildAxes();
 					widget.enterScatterPlot();
 					widget.buildInput();
+					widget.buildTooltip();
 
 					console.log(widget);
 

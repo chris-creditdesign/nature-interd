@@ -7,9 +7,6 @@
 			stroke: #666;
 			shape-rendering: crispEdges;
 		}
-
-
-
 	}
 
 	text {
@@ -28,5 +25,9 @@
 .chart {
 	.tick.major {
 			stroke-dasharray: 2, 2;
+	}
+
+	.scatterGroup circle {
+		cursor: pointer;
 	}
 }

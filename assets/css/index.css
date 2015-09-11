@@ -91,3 +91,32 @@
 .outerwrapper .chart .tick.major {
   stroke-dasharray: 2, 2;
 }
+.outerwrapper .chart .scatterGroup circle {
+  cursor: pointer;
+}
+.outerwrapper .widget-tooltip {
+  position: absolute;
+  width: 200px;
+  height: auto;
+  padding: 6px 10px 6px 15px;
+  color: #ccc;
+  background-color: #333;
+  pointer-events: none;
+  border-radius: 5px;
+  font-size: 0.8em;
+  line-height: 1.4em;
+  opacity: 1;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+.outerwrapper .widget-tooltip p {
+  padding: 0;
+}
+.outerwrapper .widget-tooltip span {
+  font-weight: bold;
+  color: #fff;
+}
+.outerwrapper .hidden {
+  opacity: 0;
+  pointer-events: none;
+}

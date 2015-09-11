@@ -27,8 +27,8 @@ function buildParams (argument) {
 	};
 
 	params.key = {
-		xAxisLabel: "References to outside disciplines",
-		yAxisLabel: "Citations from outside disciplines"
+		xAxisLabel: "References to outside disciplines (%)",
+		yAxisLabel: "Citations from outside disciplines (%)"
 	};
 
 	/*	Margin, Width and height */

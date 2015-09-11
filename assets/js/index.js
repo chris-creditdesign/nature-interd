@@ -23,6 +23,7 @@
 					widget.buildAxes();
 					widget.enterScatterPlot();
 					widget.buildInput();
+					widget.buildTooltip();
 
 					console.log(widget);
 
