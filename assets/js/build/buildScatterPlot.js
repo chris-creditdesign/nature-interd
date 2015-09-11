@@ -19,6 +19,8 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("fill", function (d) {
 			return self.colourScale(d.Discipline);
 		});
+
+	this.buildYearLabel();
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {
@@ -34,4 +36,7 @@ BuildWidget.prototype.updateScatterPlot = function() {
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
 		});
+
+	this.yearLabel.text(this.data.years[this.params.year]);
+
 };

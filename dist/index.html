@@ -436,6 +436,8 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("fill", function (d) {
 			return self.colourScale(d.Discipline);
 		});
+
+	this.buildYearLabel();
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {
@@ -451,6 +453,9 @@ BuildWidget.prototype.updateScatterPlot = function() {
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
 		});
+
+	this.yearLabel.text(this.data.years[this.params.year]);
+
 };
 BuildWidget.prototype.buildTooltip = function() {
 	var self = this;
@@ -489,6 +494,18 @@ BuildWidget.prototype.buildTooltip = function() {
 BuildWidget.prototype.hideTooltip = function () {
 	d3.select("#widget-tooltip").classed("hidden", true);
 };
+BuildWidget.prototype.buildYearLabel = function() {
+	this.yearLabel = this.svg.append("text")
+		.attr("transform", "translate(" + this.params.margin.left + "," + this.params.margin.top + ")")
+		.style("text-anchor","start")
+		.attr("dx", 15)
+		.attr("dy", 40)
+		.style("font-size", "30px")
+		.style("fill", this.params.uiColour.darkGrey)
+		.text(this.data.years[this.params.year]);
+
+
+};
 function BuildWidget (target, params, data) {
 	this.target = target;
 	this.params = params;
@@ -520,8 +537,6 @@ function BuildWidget (target, params, data) {
 					widget.enterScatterPlot();
 					widget.buildInput();
 					widget.buildTooltip();
-
-					console.log(widget.data);
 
 					widget.buildColourList("#key");
 
