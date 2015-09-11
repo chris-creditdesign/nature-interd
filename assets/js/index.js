@@ -25,7 +25,7 @@
 					widget.buildInput();
 					widget.buildTooltip();
 
-					console.log(widget);
+					widget.buildColourList("#key");
 
 				}
 			});

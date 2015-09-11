@@ -17,7 +17,7 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("stroke", self.params.uiColour.darkGrey)
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
-			return self.colourScale(d.Specialty);
+			return self.colourScale(d.Discipline);
 		});
 };
 

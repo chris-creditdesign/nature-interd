@@ -15,10 +15,6 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .widget-scale, .outerwrapper .widget-slider {
-  position: absolute;
-  top: 0;
-}
 .outerwrapper .widget-scale {
   pointer-events: none;
 }
@@ -121,6 +117,12 @@
   opacity: 0;
   pointer-events: none;
 }
+.outerwrapper .palette {
+  border-left: 20px solid;
+  padding-left: 4px;
+  display: inline-block;
+  margin: 10px;
+}
 
 </style>
 <div class="outerwrapper" id="interd-graphic">
@@ -140,6 +142,8 @@
 		<form class="widget-slider"></form>
 
 	</div>
+
+	<div class="key" id="key"></div>
 
 </div>
 
@@ -296,6 +300,10 @@ BuildWidget.prototype.buildGraphic = function() {
 							.attr("clip-path", "url(#clip)")
 							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
 
+	// this.keyGroup = this.svg.append("g")
+	// 						.attr("class","keyGroup")
+	// 						.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");
+
 	this.sliderSvg = d3.select(this.target + "> .widget-selector > .widget-scale")
 		.append("svg")
 		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
@@ -349,6 +357,35 @@ BuildWidget.prototype.buildInput = function() {
 // }
 
 // makeRange();
+// BuildWidget.prototype.buildBox = function() {
+// 	this.keyBox = this.keyGroup.append("rect")
+// 		.attr("x", 10)
+// 		.attr("y", 10)
+// 		.attr("width", 150)
+// 		.attr("height", 200)
+// 		.attr("fill", "#fff")
+// 		.attr("stroke", this.params.uiColour.grey)
+// 		.attr("stroke-width", 1)
+// 		.attr("opacity", 0.8);
+// };
+
+BuildWidget.prototype.buildColourList = function (target) {
+	var self = this;
+
+	d3.select(target)
+	  .append("ul")
+		.selectAll("li")
+		.data(self.data.discipline)
+		.enter()
+	  .append("li")
+		.attr("class", "palette")
+		.text(function(d) {
+			return d;
+		})
+		.style("border-color", function(d) {
+			return self.colourScale(d);
+		});
+};
 BuildWidget.prototype.buildScales = function(first_argument) {
 
 	this.yScale = d3.scale.linear()
@@ -387,7 +424,7 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("stroke", self.params.uiColour.darkGrey)
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
-			return self.colourScale(d.Specialty);
+			return self.colourScale(d.Discipline);
 		});
 };
 
@@ -474,7 +511,7 @@ function BuildWidget (target, params, data) {
 					widget.buildInput();
 					widget.buildTooltip();
 
-					console.log(widget);
+					widget.buildColourList("#key");
 
 				}
 			});

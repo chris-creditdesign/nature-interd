@@ -14,10 +14,6 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .widget-scale, .outerwrapper .widget-slider {
-  position: absolute;
-  top: 0;
-}
 .outerwrapper .widget-scale {
   pointer-events: none;
 }
@@ -119,4 +115,10 @@
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;
+}
+.outerwrapper .palette {
+  border-left: 20px solid;
+  padding-left: 4px;
+  display: inline-block;
+  margin: 10px;
 }
