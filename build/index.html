@@ -64,58 +64,6 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .widget-scale {
-  pointer-events: none;
-}
-.outerwrapper input[type=range] {
-  -webkit-appearance: none;
-}
-.outerwrapper input[type=range]:focus {
-  outline: none;
-}
-.outerwrapper input[type=range]::-moz-focus-outer {
-  border: 0;
-}
-.outerwrapper input[type=range]::-webkit-slider-runnable-track {
-  height: 8px;
-  background: #999;
-  border-radius: 4px;
-}
-.outerwrapper input[type=range]::-webkit-slider-thumb {
-  border: 4px solid #fff;
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  background: #333;
-  cursor: pointer;
-  -webkit-appearance: none;
-  margin-top: -7.6px;
-  -webkit-transition: border-color 200ms;
-          transition: border-color 200ms;
-}
-.outerwrapper input[type=range]:focus::-webkit-slider-thumb {
-  border-color: skyblue;
-}
-.outerwrapper input[type=range]::-moz-range-track {
-  height: 8px;
-  background: #999;
-  border-radius: 4px;
-}
-.outerwrapper input[type=range]::-moz-range-thumb {
-  border: 4px solid #fff;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #333;
-  cursor: pointer;
-  transition: border-color 200ms;
-}
-.outerwrapper input[type=range]:focus::-moz-range-thumb {
-  border-color: skyblue;
-}
-.outerwrapper input[type=range]::-ms-tooltip {
-  display: none;
-}
 .outerwrapper .chart, .outerwrapper .widget-selector {
   position: relative;
 }
@@ -133,6 +81,10 @@
 .outerwrapper .chart circle, .outerwrapper .widget-selector circle {
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
+}
+.outerwrapper .hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 .outerwrapper .chart .tick.major {
   stroke-dasharray: 2, 2;
@@ -200,11 +152,13 @@
 function buildData (data) {
 
 	var disciplineArray = [];
+	var discShort = [];
 	var yearArray = [];
 
 	data.forEach(function (element, index, array) {
 		element.ref = Math.round(parseFloat(element.OutDiscRef) * 100);
 		element.cit = Math.round(parseFloat(element.OutDiscCit) * 100);
+		element.dis = element.Discipline.toLowerCase().split(' ').join("_");
 
 		if ( isNaN(element.ref)) {
 			element.ref = 0;
@@ -216,6 +170,10 @@ function buildData (data) {
 
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);
+		}
+
+		if (discShort.indexOf(element.dis) === -1) {
+			discShort.push(element.dis);
 		}
 
 		if (yearArray.indexOf(element.Year) === -1) {
@@ -245,6 +203,7 @@ function buildData (data) {
 	return {
 		data: nest,
 		discipline: disciplineArray,
+		disciplineShortName: discShort,
 		years: yearArray
 	};
 }
@@ -404,28 +363,15 @@ BuildWidget.prototype.buildInput = function() {
 		}
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
-		self.updateScatterPlot();
+		self.updateView();
+		self.yearLabel.text(self.data.years[self.params.year]);
 
 
 		handle.attr("cx", self.yearScale(value));
-		
-		// d3.select("body").style("background-color", d3.hsl(value, 0.8, 0.8));
 	}
 };
 
 
-
-// BuildWidget.prototype.buildBox = function() {
-// 	this.keyBox = this.keyGroup.append("rect")
-// 		.attr("x", 10)
-// 		.attr("y", 10)
-// 		.attr("width", 150)
-// 		.attr("height", 200)
-// 		.attr("fill", "#fff")
-// 		.attr("stroke", this.params.uiColour.grey)
-// 		.attr("stroke-width", 1)
-// 		.attr("opacity", 0.8);
-// };
 
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
@@ -437,8 +383,14 @@ BuildWidget.prototype.buildColourList = function (target) {
 		.enter()
 	  .append("li")
 		.attr("class", "palette")
-		.text(function(d) {
-			return d;
+		.html(function (d, i) {
+			var checked = 'checked';
+			
+			var safeName = d.toLowerCase().split(' ').join("_");
+
+			var innerHTML = "<label ><input type='checkbox' value='" + safeName + "' " + checked + "> " + d + "</label>";
+
+			return innerHTML;
 		})
 		.style("border-color", function(d) {
 			return self.colourScale(d);
@@ -484,9 +436,16 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
 			return self.colourScale(d.Discipline);
+		})
+		.classed("hidden", function (d) {
+			if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
 		});
 
-	this.buildYearLabel();
+
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {
@@ -501,11 +460,29 @@ BuildWidget.prototype.updateScatterPlot = function() {
 		})
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
+		})
+		.classed("hidden", function (d) {
+			if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
 		});
-
-	this.yearLabel.text(this.data.years[this.params.year]);
-
 };
+
+BuildWidget.prototype.exitScatterPlot = function () {
+	this.scatterGroup.selectAll("circle")
+		.data(this.data.data[this.params.year].values, function (d) {
+			return d.Specialty;
+		})
+		.exit()
+		.classed("hidden", true)
+		.remove();
+};
+
+
+
+
 BuildWidget.prototype.buildTooltip = function() {
 	var self = this;
 
@@ -560,6 +537,25 @@ function BuildWidget (target, params, data) {
 	this.params = params;
 	this.data = data;
 }
+BuildWidget.prototype.updateView = function() {
+	var selectedDisciplines = []; 
+
+	var checkboxes = jQuery(".outerwrapper #key input:checked");
+
+	while (this.data.disciplineShortName.length > 0) {
+		this.data.disciplineShortName.shift();
+	}
+
+	for (var i = 0; i < checkboxes.length; i++) {
+		this.data.disciplineShortName.push(checkboxes.eq(i).val());
+	}
+
+	this.enterScatterPlot();
+	this.updateScatterPlot();
+	this.exitScatterPlot();
+	this.buildTooltip();
+
+};
 (function() {
 	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
 	var dataurl = "data/interd-data.csv";
@@ -588,6 +584,13 @@ function BuildWidget (target, params, data) {
 					widget.buildTooltip();
 
 					widget.buildColourList("#key");
+					widget.buildYearLabel();
+
+					console.log(widget);
+
+					$(".outerwrapper #key input").change(function () {
+						widget.updateView();
+					});
 
 				}
 			});

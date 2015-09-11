@@ -26,6 +26,13 @@
 					widget.buildTooltip();
 
 					widget.buildColourList("#key");
+					widget.buildYearLabel();
+
+					console.log(widget);
+
+					$(".outerwrapper #key input").change(function () {
+						widget.updateView();
+					});
 
 				}
 			});

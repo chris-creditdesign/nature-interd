@@ -22,6 +22,11 @@
 	}
 }
 
+.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
 .chart {
 	.tick.major {
 			stroke-dasharray: 2, 2;

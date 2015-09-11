@@ -1,11 +1,13 @@
 function buildData (data) {
 
 	var disciplineArray = [];
+	var discShort = [];
 	var yearArray = [];
 
 	data.forEach(function (element, index, array) {
 		element.ref = Math.round(parseFloat(element.OutDiscRef) * 100);
 		element.cit = Math.round(parseFloat(element.OutDiscCit) * 100);
+		element.dis = element.Discipline.toLowerCase().split(' ').join("_");
 
 		if ( isNaN(element.ref)) {
 			element.ref = 0;
@@ -17,6 +19,10 @@ function buildData (data) {
 
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);
+		}
+
+		if (discShort.indexOf(element.dis) === -1) {
+			discShort.push(element.dis);
 		}
 
 		if (yearArray.indexOf(element.Year) === -1) {
@@ -46,6 +52,7 @@ function buildData (data) {
 	return {
 		data: nest,
 		discipline: disciplineArray,
+		disciplineShortName: discShort,
 		years: yearArray
 	};
 }

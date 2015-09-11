@@ -18,9 +18,16 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
 			return self.colourScale(d.Discipline);
+		})
+		.classed("hidden", function (d) {
+			if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
 		});
 
-	this.buildYearLabel();
+
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {
@@ -35,8 +42,25 @@ BuildWidget.prototype.updateScatterPlot = function() {
 		})
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
+		})
+		.classed("hidden", function (d) {
+			if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
 		});
-
-	this.yearLabel.text(this.data.years[this.params.year]);
-
 };
+
+BuildWidget.prototype.exitScatterPlot = function () {
+	this.scatterGroup.selectAll("circle")
+		.data(this.data.data[this.params.year].values, function (d) {
+			return d.Specialty;
+		})
+		.exit()
+		.classed("hidden", true)
+		.remove();
+};
+
+
+

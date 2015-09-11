@@ -41,12 +41,11 @@ BuildWidget.prototype.buildInput = function() {
 		}
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
-		self.updateScatterPlot();
+		self.updateView();
+		self.yearLabel.text(self.data.years[self.params.year]);
 
 
 		handle.attr("cx", self.yearScale(value));
-		
-		// d3.select("body").style("background-color", d3.hsl(value, 0.8, 0.8));
 	}
 };
 

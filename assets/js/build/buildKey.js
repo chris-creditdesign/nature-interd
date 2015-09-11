@@ -1,15 +1,3 @@
-// BuildWidget.prototype.buildBox = function() {
-// 	this.keyBox = this.keyGroup.append("rect")
-// 		.attr("x", 10)
-// 		.attr("y", 10)
-// 		.attr("width", 150)
-// 		.attr("height", 200)
-// 		.attr("fill", "#fff")
-// 		.attr("stroke", this.params.uiColour.grey)
-// 		.attr("stroke-width", 1)
-// 		.attr("opacity", 0.8);
-// };
-
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
 
@@ -20,8 +8,14 @@ BuildWidget.prototype.buildColourList = function (target) {
 		.enter()
 	  .append("li")
 		.attr("class", "palette")
-		.text(function(d) {
-			return d;
+		.html(function (d, i) {
+			var checked = 'checked';
+			
+			var safeName = d.toLowerCase().split(' ').join("_");
+
+			var innerHTML = "<label ><input type='checkbox' value='" + safeName + "' " + checked + "> " + d + "</label>";
+
+			return innerHTML;
 		})
 		.style("border-color", function(d) {
 			return self.colourScale(d);
