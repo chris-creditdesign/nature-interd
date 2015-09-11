@@ -206,6 +206,14 @@ function buildData (data) {
 		element.ref = Math.round(parseFloat(element.OutDiscRef) * 100);
 		element.cit = Math.round(parseFloat(element.OutDiscCit) * 100);
 
+		if ( isNaN(element.ref)) {
+			element.ref = 0;
+		}
+
+		if ( isNaN(element.cit)) {
+			element.cit = 0;
+		}
+
 		if (disciplineArray.indexOf(element.Discipline) === -1) {
 			disciplineArray.push(element.Discipline);
 		}
@@ -229,6 +237,10 @@ function buildData (data) {
 			return d.Year;
 		})
 		.entries(data);
+
+	nest.sort(function (a, b) {
+		return parseInt(a.key, 10) - parseInt(b.key, 10);
+	});
 
 	return {
 		data: nest,
