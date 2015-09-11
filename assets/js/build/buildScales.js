@@ -14,6 +14,7 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 
 	this.yearScale = d3.scale.linear()
 		.range([0, this.params.width])
-		.domain([d3.min(this.data.years),d3.max(this.data.years)]);
+		.domain([d3.min(this.data.years),d3.max(this.data.years)])
+		.clamp(true);
 
 };

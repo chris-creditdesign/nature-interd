@@ -1,48 +1,53 @@
 BuildWidget.prototype.buildInput = function() {
 	var self = this;
 
-	this.slider = d3.select(this.target + "> .widget-selector > .widget-slider")
-		.style("padding", ("0 " + (this.params.margin.right - 10) + "px 0 " + (this.params.margin.left - 10) + "px"));
+	var brush = d3.svg.brush()
+		.x(this.yearScale)
+		.extent([0,0])
+		.on("brush", brushed);
 
-	this.slider.append("input")
-				.attr("type","range")
-				.attr("name","year")
-				.attr("min", this.data.years[0])
-				.attr("max", (this.data.years[this.data.years.length - 1]))
-				.attr("step", 1)
-				.attr("value", 0)
-				.style("width", (this.params.width + 20) + "px")
-				// .style("margin-top", this.params.sliderHeight + "px")
-				.on("input", function() {
-					self.params.year = (this.value - self.data.years[0]);
-					self.updateScatterPlot();
-				});
+	this.sliderSvg.append("g")
+		.attr("class", "axis")
+		.attr("transform","translate(" + this.params.margin.left + ",10)")
+	  .call(this.yearAxis)
+		.select(".domain")
+		.attr("stroke-width", "10")
+		.attr("stroke-linecap", "round")
+		.style("shape-rendering","auto")
+		.style("stroke", this.params.uiColour.lightGrey);
 
-	/*	selection.on("input") doesn't seem to work in ie
-		repeating the call to drawFrame() here on slide end */
-	jQuery(".outerwrapper input[type='range']").click(function(){
-		this.blur();
-		this.focus();
-		self.params.year = (this.value - self.data.years[0]);
+	var slider = this.sliderSvg.append("g")
+		.attr("class","slider")
+		.attr("transform","translate(" + this.params.margin.left + ",0)")
+		.call(brush);
+
+	slider.selectAll(".extent, .resize")
+		.remove();
+
+	slider.select(".background")
+		.attr("height", this.params.sliderHeight);
+
+	var handle = slider.append("circle")
+		.attr("class", "handle")
+		.attr("transform", "translate(0, " + 10 + ")" )
+		.attr("r", 10);
+
+	function brushed() {
+		var value = brush.extent()[0];
+
+		if (d3.event.sourceEvent) { /* not a programmatic event */
+			value = self.yearScale.invert(d3.mouse(this)[0]);
+			brush.extent([value, value]);
+		}
+
+		self.params.year = self.data.years.indexOf(Math.round(value));
 		self.updateScatterPlot();
-	});
-	
+
+
+		handle.attr("cx", self.yearScale(value));
+		
+		// d3.select("body").style("background-color", d3.hsl(value, 0.8, 0.8));
+	}
 };
 
 
-	// <form oninput="result.value=parseInt(a.value)+parseInt(b.value)">
-	// 	<input type="range" name="b" value="50" /> +
-	// 	<input type="number" name="a" value="10" /> =
-	// 	<output name="result"></output>
-	// </form>
-
-// var outerwrapper = d3.select(".outerwrapper");
-
-/*	makeRange()
-	Append an input[type="range"] and call drawFrame on change */
-// function makeRange () {
-// 	range = outerwrapper.select(".widget-selector")
-
-// }
-
-// makeRange();

@@ -13,7 +13,7 @@ BuildWidget.prototype.buildAxes = function() {
 
 	this.yearAxis = d3.svg.axis()
 		.scale(this.yearScale)
-		.tickSize(20, 3)
+		.tickSize(20, 0)
 		.orient("bottom")
 		.tickFormat(d3.format("d"));
 
@@ -43,8 +43,4 @@ BuildWidget.prototype.buildAxes = function() {
 				return self.params.key.xAxisLabel;
 		});
 
-	this.sliderSvg.append("g")
-		.attr("class", "axis")
-		.attr("transform","translate(" + this.params.margin.left + ",10)")
-		.call(this.yearAxis);
 };
