@@ -119,10 +119,36 @@
   pointer-events: none;
 }
 .outerwrapper .palette {
-  border-left: 20px solid;
-  padding-left: 4px;
   display: inline-block;
   margin: 10px;
+}
+.outerwrapper input[type="checkbox"] {
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-block;
+  height: 20px;
+  margin-right: 5px;
+  position: relative;
+  width: 20px;
+  -webkit-appearance: none;
+  outline: none;
+}
+.outerwrapper input[type="checkbox"]:active, .outerwrapper input[type="checkbox"]:focus {
+  background-color: #222;
+}
+.outerwrapper input[type="checkbox"]:after {
+  content: "\2714";
+  font-size: 1em;
+  display: inline-block;
+  left: 0.3em;
+  position: relative;
+  top: 0.15em;
+  color: #fff;
+  opacity: 0;
+}
+.outerwrapper input[type="checkbox"]:checked:after {
+  display: inline-block;
+  opacity: 1;
 }
 
 </style>
@@ -399,7 +425,8 @@ BuildWidget.prototype.buildColourList = function (target) {
 
 			return innerHTML;
 		})
-		.style("border-color", function(d) {
+		.select("input")
+		.style("background-color", function (d) {
 			if (d === "All") {
 				return self.params.uiColour.lightGrey;
 			} else {

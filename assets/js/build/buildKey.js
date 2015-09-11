@@ -24,7 +24,8 @@ BuildWidget.prototype.buildColourList = function (target) {
 
 			return innerHTML;
 		})
-		.style("border-color", function(d) {
+		.select("input")
+		.style("background-color", function (d) {
 			if (d === "All") {
 				return self.params.uiColour.lightGrey;
 			} else {
