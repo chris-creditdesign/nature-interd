@@ -1,6 +1,6 @@
 (function() {
 	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
-	var dataurl = "/data/interd-data.csv";
+	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
