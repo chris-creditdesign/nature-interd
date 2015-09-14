@@ -1,5 +1,10 @@
 .key ul li {
 	display: inline-block;
+	padding: 3px 10px 1px 0;
+	margin: 5px;
+
+	border-bottom-width: 5px;
+	border-bottom-style: solid;
 
 	label {
 		cursor: pointer;
@@ -7,33 +12,33 @@
 }
 
 input[type="checkbox"] {
-	margin: 10px;
+	// margin: 10px;
 	
-	border-radius: 50%;
+	// border-radius: 50%;
 	cursor: pointer;
-	display: inline-block;
-	height: 20px;
+	// display: inline-block;
+	// height: 20px;
 	margin-right: 5px;
-	position: relative;
-	width: 20px;
-	-webkit-appearance: none;
-	outline: none;
+	// position: relative;
+	// width: 20px;
+	// -webkit-appearance: none;
+	// outline: none;
 
-	&:active, &:focus {
-		background-color: #222;
-	}
+	// &:active, &:focus {
+	// 	background-color: #222;
+	// }
 }
 
 
 input[type="checkbox"]:after {
-	content: "\2714";
-	font-size: 1em;
-	display: inline-block;
-	left: 0.3em;
-	position: relative;
-	top: 0.15em;
-	color: #fff;
-	opacity: 0;
+	// content: "\2714";
+	// font-size: 1em;
+	// display: inline-block;
+	// left: 0.3em;
+	// position: relative;
+	// top: 0.15em;
+	// color: #fff;
+	// opacity: 0;
 }
 
 

@@ -77,34 +77,17 @@
 }
 .outerwrapper .key ul li {
   display: inline-block;
+  padding: 3px 10px 1px 0;
+  margin: 5px;
+  border-bottom-width: 5px;
+  border-bottom-style: solid;
 }
 .outerwrapper .key ul li label {
   cursor: pointer;
 }
 .outerwrapper input[type="checkbox"] {
-  margin: 10px;
-  border-radius: 50%;
   cursor: pointer;
-  display: inline-block;
-  height: 20px;
   margin-right: 5px;
-  position: relative;
-  width: 20px;
-  -webkit-appearance: none;
-  outline: none;
-}
-.outerwrapper input[type="checkbox"]:active, .outerwrapper input[type="checkbox"]:focus {
-  background-color: #222;
-}
-.outerwrapper input[type="checkbox"]:after {
-  content: "\2714";
-  font-size: 1em;
-  display: inline-block;
-  left: 0.3em;
-  position: relative;
-  top: 0.15em;
-  color: #fff;
-  opacity: 0;
 }
 .outerwrapper input[type="checkbox"]:checked:after {
   display: inline-block;
@@ -385,7 +368,14 @@ BuildWidget.prototype.buildColourList = function (target) {
 		.selectAll("li")
 		.data(extendedDiscipline)
 		.enter()
-	  .append("li");
+	  .append("li")
+		.style("border-bottom-color", function (d) {
+			if (d === "All") {
+				return self.params.uiColour.lightGrey;
+			} else {
+				return self.colourScale(d);
+			}
+		});
 	
 	this.checkboxes.append("input")
 		.attr("type","checkbox")
@@ -398,13 +388,6 @@ BuildWidget.prototype.buildColourList = function (target) {
 		})
 		.attr("id", function (d) {
 			return makeSafe(d);
-		})
-		.style("background-color", function (d) {
-			if (d === "All") {
-				return self.params.uiColour.lightGrey;
-			} else {
-				return self.colourScale(d);
-			}
 		});
 
 	this.checkboxes.append("label")

@@ -18,7 +18,14 @@ BuildWidget.prototype.buildColourList = function (target) {
 		.selectAll("li")
 		.data(extendedDiscipline)
 		.enter()
-	  .append("li");
+	  .append("li")
+		.style("border-bottom-color", function (d) {
+			if (d === "All") {
+				return self.params.uiColour.lightGrey;
+			} else {
+				return self.colourScale(d);
+			}
+		});
 	
 	this.checkboxes.append("input")
 		.attr("type","checkbox")
@@ -31,13 +38,6 @@ BuildWidget.prototype.buildColourList = function (target) {
 		})
 		.attr("id", function (d) {
 			return makeSafe(d);
-		})
-		.style("background-color", function (d) {
-			if (d === "All") {
-				return self.params.uiColour.lightGrey;
-			} else {
-				return self.colourScale(d);
-			}
 		});
 
 	this.checkboxes.append("label")
