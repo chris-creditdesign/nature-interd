@@ -3,6 +3,11 @@
   border: 1px solid #c00;
   background: #fac7c7;
   padding: 10px;
+  display: none;
+}
+
+.js-disabled .status-message, .ie6 .status-message, .ie7 .status-message, .ie8 .status-message {
+  display: block;
 }
 
 .outerwrapper {
@@ -10,6 +15,7 @@
   min-height: 900px;
   position: relative;
   border: 1px solid #c8c7cf;
+  display: none;
 }
 .outerwrapper h2, .outerwrapper h3, .outerwrapper p {
   padding: 10px 10px 0 10px;
@@ -106,6 +112,12 @@
 }
 
 </style>
+<div class="status-message">
+	<p>This interactive graphic requires a modern browser (e.g. Chrome, Safari or Firefox) with javascript enabled.</p>
+	<p>The data used to build this graphic can be downloaded as comma-separated values in plain-text form here: <a href="#" title="Download xxx  XXK">xxxx.txt</a>.</p>
+</div>
+
+
 <div class="outerwrapper" id="interd-graphic">
 	<h2>Interdisciplinary headline</h2>
 
@@ -605,14 +617,16 @@ BuildWidget.prototype.updateView = function() {
 		/*	Load D3 */
 		$.getScript(d3url, function() {
 			d3.csv(dataurl, function (error, d) {
+
 				var data, params, widget;
 				var width = $(window).width();
 				var didResize = false;
 				
 				if (error) {
-					// $(".status-message").css("display","block");
-					console.log(error);
+					$(".status-message").css("display","block");
 				} else {
+					$(".outerwrapper").css("display","block");
+
 					data = buildData(d);
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);

@@ -2,6 +2,11 @@
   border: 1px solid #c00;
   background: #fac7c7;
   padding: 10px;
+  display: none;
+}
+
+.js-disabled .status-message, .ie6 .status-message, .ie7 .status-message, .ie8 .status-message {
+  display: block;
 }
 
 .outerwrapper {
@@ -9,6 +14,7 @@
   min-height: 900px;
   position: relative;
   border: 1px solid #c8c7cf;
+  display: none;
 }
 .outerwrapper h2, .outerwrapper h3, .outerwrapper p {
   padding: 10px 10px 0 10px;

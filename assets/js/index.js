@@ -6,14 +6,16 @@
 		/*	Load D3 */
 		$.getScript(d3url, function() {
 			d3.csv(dataurl, function (error, d) {
+
 				var data, params, widget;
 				var width = $(window).width();
 				var didResize = false;
 				
 				if (error) {
-					// $(".status-message").css("display","block");
-					console.log(error);
+					$(".status-message").css("display","block");
 				} else {
+					$(".outerwrapper").css("display","block");
+
 					data = buildData(d);
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);
