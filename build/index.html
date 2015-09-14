@@ -70,21 +70,25 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .chart, .outerwrapper .widget-selector {
+.outerwrapper h3 {
+  margin-left: 40px;
+  padding-left: 0;
+}
+.outerwrapper .chart, .outerwrapper .widget-slider {
   position: relative;
 }
-.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-selector .axis path, .outerwrapper .widget-selector .axis line {
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-slider .axis path, .outerwrapper .widget-slider .axis line {
   fill: none;
   stroke: #666;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart text, .outerwrapper .widget-selector text {
+.outerwrapper .chart text, .outerwrapper .widget-slider text {
   font-family: sans-serif;
   fill: #666;
   font-size: 13px;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart circle, .outerwrapper .widget-selector circle {
+.outerwrapper .chart circle, .outerwrapper .widget-slider circle {
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
@@ -96,6 +100,12 @@
   stroke-dasharray: 2, 2;
 }
 .outerwrapper .chart .scatterGroup circle {
+  cursor: pointer;
+}
+.outerwrapper .widget-slider .axis {
+  pointer-events: none;
+}
+.outerwrapper .widget-slider .handle {
   cursor: pointer;
 }
 .outerwrapper .widget-tooltip {
@@ -123,6 +133,17 @@
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;
+}
+.outerwrapper .widget-selector {
+  padding-left: 40px;
+  padding-right: 20px;
+}
+.outerwrapper .widget-selector select {
+  width: 100%;
+}
+.outerwrapper .key {
+  padding-left: 40px;
+  padding-right: 20px;
 }
 .outerwrapper .key ul li {
   display: inline-block;
@@ -163,12 +184,14 @@
 		</div>
 	</div>
 
-	<div class="widget-selector">
-		
-		<div class="widget-slider"></div>
+	<h3>Choose a year:</h3>
 
-	</div>
+	<div class="widget-slider"></div>
 
+	<div class="widget-selector"></div>
+
+	<h3>Choose a discipline</h3>
+	
 	<div class="key" id="key"></div>
 
 </div>
@@ -271,7 +294,7 @@ function buildParams (argument) {
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
 	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
 
-	params.sliderHeight = 60;
+	params.sliderHeight = 50;
 
 	params.year = 0;
 
@@ -341,13 +364,17 @@ BuildWidget.prototype.buildGraphic = function() {
 							.attr("clip-path", "url(#clip)")
 							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
 
-	this.sliderSvg = d3.select(this.target + "> .widget-selector ")
+	this.sliderSvg = d3.select(this.target + "> .widget-slider ")
 		.append("svg")
 		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
 		.attr("height", this.params.sliderHeight);
+
+	this.dropdown = d3.select(this.target + "> .widget-selector")
+		.append("select");
 };
 BuildWidget.prototype.buildInput = function() {
 	var self = this;
+	var yearNum;
 
 	var brush = d3.svg.brush()
 		.x(this.yearScale)
@@ -373,12 +400,26 @@ BuildWidget.prototype.buildInput = function() {
 		.remove();
 
 	slider.select(".background")
-		.attr("height", this.params.sliderHeight);
+		.attr("height", this.params.sliderHeight)
+		.style("cursor", "auto");
 
 	var handle = slider.append("circle")
 		.attr("class", "handle")
 		.attr("transform", "translate(0, " + 10 + ")" )
 		.attr("r", 10);
+
+	this.dropdown.selectAll("option")
+		.data(this.data.years)
+		.enter()
+	  .append("option")
+		.attr("value", function (d) { return d; })
+		.text(function (d) { return d; });
+	
+	this.dropdown.on("change", function () {
+			yearNum = parseInt(this.value, 10);
+			brush.extent([yearNum, yearNum]);
+			brushed();
+		});
 
 	function brushed() {
 		var value = brush.extent()[0];
@@ -387,15 +428,29 @@ BuildWidget.prototype.buildInput = function() {
 			value = self.yearScale.invert(d3.mouse(this)[0]);
 			brush.extent([value, value]);
 		}
+		console.log(value);
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();
 		self.yearLabel.text(self.data.years[self.params.year]);
 
-
 		handle.attr("cx", self.yearScale(value));
+		self.dropdown.node().value = Math.round(value);
 	}
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -621,6 +676,7 @@ BuildWidget.prototype.build = function() {
 BuildWidget.prototype.destroy = function() {
 	this.svg.remove();
 	this.sliderSvg.remove();
+	this.dropdown.remove();
 	this.checkboxList.remove();
 };
 
@@ -644,7 +700,8 @@ BuildWidget.prototype.updateView = function() {
 
 };
 (function() {
-	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	// var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
 	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
@@ -664,6 +721,9 @@ BuildWidget.prototype.updateView = function() {
 					data = buildData(d);
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);
+
+					console.log(widget);
+
 					widget.build();
 				}
 
@@ -686,9 +746,6 @@ BuildWidget.prototype.updateView = function() {
 
 					}
 				});
-
-
-
 			});
 
 		});

@@ -16,8 +16,11 @@ BuildWidget.prototype.buildGraphic = function() {
 							.attr("clip-path", "url(#clip)")
 							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
 
-	this.sliderSvg = d3.select(this.target + "> .widget-selector ")
+	this.sliderSvg = d3.select(this.target + "> .widget-slider ")
 		.append("svg")
 		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
 		.attr("height", this.params.sliderHeight);
+
+	this.dropdown = d3.select(this.target + "> .widget-selector")
+		.append("select");
 };

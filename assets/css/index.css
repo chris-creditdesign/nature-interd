@@ -20,21 +20,25 @@
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-.outerwrapper .chart, .outerwrapper .widget-selector {
+.outerwrapper h3 {
+  margin-left: 40px;
+  padding-left: 0;
+}
+.outerwrapper .chart, .outerwrapper .widget-slider {
   position: relative;
 }
-.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-selector .axis path, .outerwrapper .widget-selector .axis line {
+.outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-slider .axis path, .outerwrapper .widget-slider .axis line {
   fill: none;
   stroke: #666;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart text, .outerwrapper .widget-selector text {
+.outerwrapper .chart text, .outerwrapper .widget-slider text {
   font-family: sans-serif;
   fill: #666;
   font-size: 13px;
   shape-rendering: crispEdges;
 }
-.outerwrapper .chart circle, .outerwrapper .widget-selector circle {
+.outerwrapper .chart circle, .outerwrapper .widget-slider circle {
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
@@ -46,6 +50,12 @@
   stroke-dasharray: 2, 2;
 }
 .outerwrapper .chart .scatterGroup circle {
+  cursor: pointer;
+}
+.outerwrapper .widget-slider .axis {
+  pointer-events: none;
+}
+.outerwrapper .widget-slider .handle {
   cursor: pointer;
 }
 .outerwrapper .widget-tooltip {
@@ -73,6 +83,17 @@
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;
+}
+.outerwrapper .widget-selector {
+  padding-left: 40px;
+  padding-right: 20px;
+}
+.outerwrapper .widget-selector select {
+  width: 100%;
+}
+.outerwrapper .key {
+  padding-left: 40px;
+  padding-right: 20px;
 }
 .outerwrapper .key ul li {
   display: inline-block;

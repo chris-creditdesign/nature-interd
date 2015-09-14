@@ -1,5 +1,6 @@
 (function() {
-	var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	// var d3url = "http://www.nature.com/polopoly_static/js/d3.v3.min.js";
+	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
 	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
@@ -19,6 +20,9 @@
 					data = buildData(d);
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);
+
+					console.log(widget);
+
 					widget.build();
 				}
 
@@ -41,9 +45,6 @@
 
 					}
 				});
-
-
-
 			});
 
 		});

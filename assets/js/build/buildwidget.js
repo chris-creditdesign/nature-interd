@@ -20,5 +20,6 @@ BuildWidget.prototype.build = function() {
 BuildWidget.prototype.destroy = function() {
 	this.svg.remove();
 	this.sliderSvg.remove();
+	this.dropdown.remove();
 	this.checkboxList.remove();
 };

@@ -1,4 +1,4 @@
-.chart, .widget-selector {
+.chart, .widget-slider {
 	position: relative;
 
 	.axis {
@@ -35,4 +35,18 @@
 	.scatterGroup circle {
 		cursor: pointer;
 	}
+}
+
+.widget-slider {
+	.axis {
+		pointer-events: none;
+	}
+
+	.handle {
+		cursor: pointer;
+	}
+
+	// .slider rect.background {
+	// 	cursor: auto;
+	// }
 }

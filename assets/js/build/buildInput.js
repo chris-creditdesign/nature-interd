@@ -1,5 +1,6 @@
 BuildWidget.prototype.buildInput = function() {
 	var self = this;
+	var yearNum;
 
 	var brush = d3.svg.brush()
 		.x(this.yearScale)
@@ -25,12 +26,26 @@ BuildWidget.prototype.buildInput = function() {
 		.remove();
 
 	slider.select(".background")
-		.attr("height", this.params.sliderHeight);
+		.attr("height", this.params.sliderHeight)
+		.style("cursor", "auto");
 
 	var handle = slider.append("circle")
 		.attr("class", "handle")
 		.attr("transform", "translate(0, " + 10 + ")" )
 		.attr("r", 10);
+
+	this.dropdown.selectAll("option")
+		.data(this.data.years)
+		.enter()
+	  .append("option")
+		.attr("value", function (d) { return d; })
+		.text(function (d) { return d; });
+	
+	this.dropdown.on("change", function () {
+			yearNum = parseInt(this.value, 10);
+			brush.extent([yearNum, yearNum]);
+			brushed();
+		});
 
 	function brushed() {
 		var value = brush.extent()[0];
@@ -39,14 +54,28 @@ BuildWidget.prototype.buildInput = function() {
 			value = self.yearScale.invert(d3.mouse(this)[0]);
 			brush.extent([value, value]);
 		}
+		console.log(value);
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();
 		self.yearLabel.text(self.data.years[self.params.year]);
 
-
 		handle.attr("cx", self.yearScale(value));
+		self.dropdown.node().value = Math.round(value);
 	}
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
