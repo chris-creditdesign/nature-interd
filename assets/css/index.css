@@ -68,11 +68,14 @@
   opacity: 0;
   pointer-events: none;
 }
-.outerwrapper .palette {
+.outerwrapper .key ul li {
   display: inline-block;
-  margin: 10px;
+}
+.outerwrapper .key ul li label {
+  cursor: pointer;
 }
 .outerwrapper input[type="checkbox"] {
+  margin: 10px;
   border-radius: 50%;
   cursor: pointer;
   display: inline-block;

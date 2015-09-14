@@ -6,41 +6,42 @@
 		/*	Load D3 */
 		$.getScript(d3url, function() {
 			d3.csv(dataurl, function (error, d) {
+				var data, params, widget;
+				var width = $(window).width();
+				var didResize = false;
 				
 				if (error) {
 					// $(".status-message").css("display","block");
 					console.log(error);
 				} else {
-				
-					var data = buildData(d);
-
-					var params = buildParams();
-
-					var widget = new BuildWidget("#interd-graphic", params, data);
-
-					widget.buildGraphic();
-					widget.buildScales();
-					widget.buildAxes();
-					widget.enterScatterPlot();
-					widget.buildInput();
-					widget.buildTooltip();
-
-					widget.buildColourList("#key");
-					widget.buildYearLabel();
-
-					console.log(widget);
-
-					$(".outerwrapper #key input").change(function () {
-						if ($(this).val() === "all") {
-
-							thisProp = $(this).prop("checked");
-							$(".outerwrapper #key input").prop("checked", thisProp);	
-						}
-
-						widget.updateView();
-					});
-
+					data = buildData(d);
+					params = buildParams();
+					widget = new BuildWidget("#interd-graphic", params, data);
+					widget.build();
 				}
+
+				$( window ).on("resize", function() {
+					if($(window).width() != width){ 
+						width = $(window).width();
+						didResize = true;
+
+						/* Throttle the resize */
+						setTimeout(function () {
+							if (didResize) {
+								widget.destroy();
+								widget.params = buildParams();
+								widget.build();
+								widget.updateView();
+								
+								didResize = false;
+							}
+						}, 60);
+
+					}
+				});
+
+
+
 			});
 
 		});

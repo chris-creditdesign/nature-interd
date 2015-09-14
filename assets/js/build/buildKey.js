@@ -1,30 +1,37 @@
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
+	var thisProp;
+
+	function makeSafe (i) {
+		return i.toLowerCase().split(' ').join("_");
+	}
 
 	var extendedDiscipline = ["All"];
 	for (var i = 0; i < this.data.discipline.length; i++) {
 		extendedDiscipline.push(this.data.discipline[i]);
 	}
 
-	console.log(self.colourScale("After"));
+	this.checkboxList = d3.select(target)
+	  .append("ul");
 
-	d3.select(target)
-	  .append("ul")
+	this.checkboxes = this.checkboxList
 		.selectAll("li")
 		.data(extendedDiscipline)
 		.enter()
-	  .append("li")
-		.attr("class", "palette")
-		.html(function (d, i) {
-			var checked = 'checked';
-			
-			var safeName = d.toLowerCase().split(' ').join("_");
-
-			var innerHTML = "<label ><input type='checkbox' value='" + safeName + "' " + checked + "> " + d + "</label>";
-
-			return innerHTML;
+	  .append("li");
+	
+	this.checkboxes.append("input")
+		.attr("type","checkbox")
+		.attr("checked","true")
+		.attr("value", function (d) {
+			return makeSafe(d);
 		})
-		.select("input")
+		.attr("name", function (d) {
+			return makeSafe(d);
+		})
+		.attr("id", function (d) {
+			return makeSafe(d);
+		})
 		.style("background-color", function (d) {
 			if (d === "All") {
 				return self.params.uiColour.lightGrey;
@@ -32,4 +39,30 @@ BuildWidget.prototype.buildColourList = function (target) {
 				return self.colourScale(d);
 			}
 		});
+
+	this.checkboxes.append("label")
+		.text(function (d) { return d;})
+		.attr("for", function (d) {
+			return makeSafe(d);
+		});
+
+
+	this.checkboxes.on("change", function () {
+		var checkbox = d3.select(this).select("input");
+
+		if (checkbox.attr("value") === "all") {
+			console.log();
+			thisProp = checkbox.node().checked;
+
+
+		
+			self.checkboxes.each(function () {
+				// this.checked = thisProp;
+				d3.select(this).select("input").node().checked = thisProp;
+			});
+		}
+
+		self.updateView();
+
+	});
 };

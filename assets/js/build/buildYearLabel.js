@@ -7,6 +7,4 @@ BuildWidget.prototype.buildYearLabel = function() {
 		.style("font-size", "30px")
 		.style("fill", this.params.uiColour.darkGrey)
 		.text(this.data.years[this.params.year]);
-
-
 };

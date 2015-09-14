@@ -61,6 +61,3 @@ BuildWidget.prototype.exitScatterPlot = function () {
 		.classed("hidden", true)
 		.remove();
 };
-
-
-

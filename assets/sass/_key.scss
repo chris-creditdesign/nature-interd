@@ -1,11 +1,14 @@
-.palette {
-	// border-left: 20px solid;
-	// padding-left: 4px;
+.key ul li {
 	display: inline-block;
-	margin: 10px;
+
+	label {
+		cursor: pointer;
+	}
 }
 
 input[type="checkbox"] {
+	margin: 10px;
+	
 	border-radius: 50%;
 	cursor: pointer;
 	display: inline-block;

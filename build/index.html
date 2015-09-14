@@ -118,11 +118,14 @@
   opacity: 0;
   pointer-events: none;
 }
-.outerwrapper .palette {
+.outerwrapper .key ul li {
   display: inline-block;
-  margin: 10px;
+}
+.outerwrapper .key ul li label {
+  cursor: pointer;
 }
 .outerwrapper input[type="checkbox"] {
+  margin: 10px;
   border-radius: 50%;
   cursor: pointer;
   display: inline-block;
@@ -401,31 +404,38 @@ BuildWidget.prototype.buildInput = function() {
 
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
+	var thisProp;
+
+	function makeSafe (i) {
+		return i.toLowerCase().split(' ').join("_");
+	}
 
 	var extendedDiscipline = ["All"];
 	for (var i = 0; i < this.data.discipline.length; i++) {
 		extendedDiscipline.push(this.data.discipline[i]);
 	}
 
-	console.log(self.colourScale("After"));
+	this.checkboxList = d3.select(target)
+	  .append("ul");
 
-	d3.select(target)
-	  .append("ul")
+	this.checkboxes = this.checkboxList
 		.selectAll("li")
 		.data(extendedDiscipline)
 		.enter()
-	  .append("li")
-		.attr("class", "palette")
-		.html(function (d, i) {
-			var checked = 'checked';
-			
-			var safeName = d.toLowerCase().split(' ').join("_");
-
-			var innerHTML = "<label ><input type='checkbox' value='" + safeName + "' " + checked + "> " + d + "</label>";
-
-			return innerHTML;
+	  .append("li");
+	
+	this.checkboxes.append("input")
+		.attr("type","checkbox")
+		.attr("checked","true")
+		.attr("value", function (d) {
+			return makeSafe(d);
 		})
-		.select("input")
+		.attr("name", function (d) {
+			return makeSafe(d);
+		})
+		.attr("id", function (d) {
+			return makeSafe(d);
+		})
 		.style("background-color", function (d) {
 			if (d === "All") {
 				return self.params.uiColour.lightGrey;
@@ -433,6 +443,32 @@ BuildWidget.prototype.buildColourList = function (target) {
 				return self.colourScale(d);
 			}
 		});
+
+	this.checkboxes.append("label")
+		.text(function (d) { return d;})
+		.attr("for", function (d) {
+			return makeSafe(d);
+		});
+
+
+	this.checkboxes.on("change", function () {
+		var checkbox = d3.select(this).select("input");
+
+		if (checkbox.attr("value") === "all") {
+			console.log();
+			thisProp = checkbox.node().checked;
+
+
+		
+			self.checkboxes.each(function () {
+				// this.checked = thisProp;
+				d3.select(this).select("input").node().checked = thisProp;
+			});
+		}
+
+		self.updateView();
+
+	});
 };
 BuildWidget.prototype.buildScales = function(first_argument) {
 
@@ -518,9 +554,6 @@ BuildWidget.prototype.exitScatterPlot = function () {
 		.remove();
 };
 
-
-
-
 BuildWidget.prototype.buildTooltip = function() {
 	var self = this;
 
@@ -558,6 +591,7 @@ BuildWidget.prototype.buildTooltip = function() {
 BuildWidget.prototype.hideTooltip = function () {
 	d3.select("#widget-tooltip").classed("hidden", true);
 };
+
 BuildWidget.prototype.buildYearLabel = function() {
 	this.yearLabel = this.svg.append("text")
 		.attr("transform", "translate(" + this.params.margin.left + "," + this.params.margin.top + ")")
@@ -567,14 +601,32 @@ BuildWidget.prototype.buildYearLabel = function() {
 		.style("font-size", "30px")
 		.style("fill", this.params.uiColour.darkGrey)
 		.text(this.data.years[this.params.year]);
-
-
 };
 function BuildWidget (target, params, data) {
 	this.target = target;
 	this.params = params;
 	this.data = data;
 }
+
+BuildWidget.prototype.build = function() {
+	this.buildGraphic();
+	this.buildScales();
+	this.buildAxes();
+	this.enterScatterPlot();
+	this.buildInput();
+	this.buildTooltip();
+
+	this.buildColourList("#key");
+	this.buildYearLabel();
+
+};
+
+BuildWidget.prototype.destroy = function() {
+	this.svg.remove();
+	this.sliderSvg.remove();
+	this.checkboxList.remove();
+};
+
 BuildWidget.prototype.updateView = function() {
 	var selectedDisciplines = []; 
 
@@ -602,41 +654,42 @@ BuildWidget.prototype.updateView = function() {
 		/*	Load D3 */
 		$.getScript(d3url, function() {
 			d3.csv(dataurl, function (error, d) {
+				var data, params, widget;
+				var width = $(window).width();
+				var didResize = false;
 				
 				if (error) {
 					// $(".status-message").css("display","block");
 					console.log(error);
 				} else {
-				
-					var data = buildData(d);
-
-					var params = buildParams();
-
-					var widget = new BuildWidget("#interd-graphic", params, data);
-
-					widget.buildGraphic();
-					widget.buildScales();
-					widget.buildAxes();
-					widget.enterScatterPlot();
-					widget.buildInput();
-					widget.buildTooltip();
-
-					widget.buildColourList("#key");
-					widget.buildYearLabel();
-
-					console.log(widget);
-
-					$(".outerwrapper #key input").change(function () {
-						if ($(this).val() === "all") {
-
-							thisProp = $(this).prop("checked");
-							$(".outerwrapper #key input").prop("checked", thisProp);	
-						}
-
-						widget.updateView();
-					});
-
+					data = buildData(d);
+					params = buildParams();
+					widget = new BuildWidget("#interd-graphic", params, data);
+					widget.build();
 				}
+
+				$( window ).on("resize", function() {
+					if($(window).width() != width){ 
+						width = $(window).width();
+						didResize = true;
+
+						/* Throttle the resize */
+						setTimeout(function () {
+							if (didResize) {
+								widget.destroy();
+								widget.params = buildParams();
+								widget.build();
+								widget.updateView();
+								
+								didResize = false;
+							}
+						}, 60);
+
+					}
+				});
+
+
+
 			});
 
 		});
