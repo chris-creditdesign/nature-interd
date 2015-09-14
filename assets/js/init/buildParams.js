@@ -38,7 +38,7 @@ function buildParams (argument) {
 
 	params.dotRadius = params.width > 350 ?  5 : 3;
 
-	params.yearPixelsPerTick = 50;
+	params.yearPixelsPerTick = 40;
 		
 	params.sliderHeight = 50;
 
