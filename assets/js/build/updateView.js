@@ -14,6 +14,7 @@ BuildWidget.prototype.updateView = function() {
 	this.enterScatterPlot();
 	this.updateScatterPlot();
 	this.exitScatterPlot();
+	this.hideTooltip();
 	this.buildTooltip();
 
 };

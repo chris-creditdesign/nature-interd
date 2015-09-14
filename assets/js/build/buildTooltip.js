@@ -33,5 +33,6 @@ BuildWidget.prototype.buildTooltip = function() {
 };
 
 BuildWidget.prototype.hideTooltip = function () {
+	this.scatterGroup.selectAll("circle").attr("stroke-width", 0);
 	d3.select("#widget-tooltip").classed("hidden", true);
 };

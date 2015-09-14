@@ -47,7 +47,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.outerwrapper .chart .tick.major {
+.outerwrapper .chart .tick {
   stroke-dasharray: 2, 2;
 }
 .outerwrapper .chart .scatterGroup circle {
@@ -245,6 +245,10 @@ function buildParams (argument) {
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
 	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
 
+	params.dotRadius = params.width > 350 ?  5 : 3;
+
+	params.yearPixelsPerTick = 50;
+		
 	params.sliderHeight = 50;
 
 	params.year = 0;
@@ -267,13 +271,12 @@ BuildWidget.prototype.buildAxes = function() {
 	this.yearAxis = d3.svg.axis()
 		.scale(this.yearScale)
 		.tickSize(20, 0)
+		.ticks(this.params.width / this.params.yearPixelsPerTick)
 		.orient("bottom")
 		.tickFormat(d3.format("d"));
 
-	this.svg.append("g")
-		.attr("class", "y axis")
-		.attr("transform", "translate(" +this.params.margin.left + "," + this.params.margin.top + ")")
-		.call(this.yAxis)
+
+	this.yAxisGroup.call(this.yAxis)
 	  .append("g")
 		.attr("class", "axisLabel")
 	  .append("text")
@@ -283,10 +286,7 @@ BuildWidget.prototype.buildAxes = function() {
 			return self.params.key.yAxisLabel;
 		});
 
-	this.svg.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")")
-		.call(this.xAxis)
+	this.xAxisGroup.call(this.xAxis)
 	  .append("g")
 		.attr("class","axisLabel")
 	  .append("text")
@@ -309,6 +309,14 @@ BuildWidget.prototype.buildGraphic = function() {
 					.attr("y", 0)
 					.attr("width", this.params.width)
 					.attr("height", this.params.height);
+
+	this.yAxisGroup = this.svg.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(" +this.params.margin.left + "," + this.params.margin.top + ")");
+
+	this.xAxisGroup = this.svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")");
 
 	this.scatterGroup = this.svg.append("g")
 							.attr("class","scatterGroup")
@@ -379,7 +387,6 @@ BuildWidget.prototype.buildInput = function() {
 			value = self.yearScale.invert(d3.mouse(this)[0]);
 			brush.extent([value, value]);
 		}
-		console.log(value);
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();
@@ -508,7 +515,7 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
 		})
-		.attr("r", 5)
+		.attr("r", self.params.dotRadius)
 		.attr("stroke", self.params.uiColour.darkGrey)
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {
@@ -592,6 +599,7 @@ BuildWidget.prototype.buildTooltip = function() {
 };
 
 BuildWidget.prototype.hideTooltip = function () {
+	this.scatterGroup.selectAll("circle").attr("stroke-width", 0);
 	d3.select("#widget-tooltip").classed("hidden", true);
 };
 
@@ -647,6 +655,7 @@ BuildWidget.prototype.updateView = function() {
 	this.enterScatterPlot();
 	this.updateScatterPlot();
 	this.exitScatterPlot();
+	this.hideTooltip();
 	this.buildTooltip();
 
 };
@@ -672,8 +681,6 @@ BuildWidget.prototype.updateView = function() {
 					data = buildData(d);
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);
-
-					console.log(widget);
 
 					widget.build();
 				}

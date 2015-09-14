@@ -54,7 +54,6 @@ BuildWidget.prototype.buildInput = function() {
 			value = self.yearScale.invert(d3.mouse(this)[0]);
 			brush.extent([value, value]);
 		}
-		console.log(value);
 
 		self.params.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();

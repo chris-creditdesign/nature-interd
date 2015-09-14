@@ -46,7 +46,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.outerwrapper .chart .tick.major {
+.outerwrapper .chart .tick {
   stroke-dasharray: 2, 2;
 }
 .outerwrapper .chart .scatterGroup circle {

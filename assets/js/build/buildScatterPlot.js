@@ -13,7 +13,7 @@ BuildWidget.prototype.enterScatterPlot = function() {
 		.attr("cy", function (d) {
 			return self.yScale(d.cit);
 		})
-		.attr("r", 5)
+		.attr("r", self.params.dotRadius)
 		.attr("stroke", self.params.uiColour.darkGrey)
 		.attr("stroke-width", 0)
 		.attr("fill", function (d) {

@@ -14,13 +14,12 @@ BuildWidget.prototype.buildAxes = function() {
 	this.yearAxis = d3.svg.axis()
 		.scale(this.yearScale)
 		.tickSize(20, 0)
+		.ticks(this.params.width / this.params.yearPixelsPerTick)
 		.orient("bottom")
 		.tickFormat(d3.format("d"));
 
-	this.svg.append("g")
-		.attr("class", "y axis")
-		.attr("transform", "translate(" +this.params.margin.left + "," + this.params.margin.top + ")")
-		.call(this.yAxis)
+
+	this.yAxisGroup.call(this.yAxis)
 	  .append("g")
 		.attr("class", "axisLabel")
 	  .append("text")
@@ -30,10 +29,7 @@ BuildWidget.prototype.buildAxes = function() {
 			return self.params.key.yAxisLabel;
 		});
 
-	this.svg.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")")
-		.call(this.xAxis)
+	this.xAxisGroup.call(this.xAxis)
 	  .append("g")
 		.attr("class","axisLabel")
 	  .append("text")

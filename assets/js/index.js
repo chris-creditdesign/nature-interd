@@ -21,8 +21,6 @@
 					params = buildParams();
 					widget = new BuildWidget("#interd-graphic", params, data);
 
-					console.log(widget);
-
 					widget.build();
 				}
 

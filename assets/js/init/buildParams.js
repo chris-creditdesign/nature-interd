@@ -36,6 +36,10 @@ function buildParams (argument) {
 	params.width = jQuery('.outerwrapper').width()  - params.margin.left - params.margin.right;
 	params.height = jQuery('.outerwrapper').width() - params.margin.top - params.margin.bottom;
 
+	params.dotRadius = params.width > 350 ?  5 : 3;
+
+	params.yearPixelsPerTick = 50;
+		
 	params.sliderHeight = 50;
 
 	params.year = 0;
