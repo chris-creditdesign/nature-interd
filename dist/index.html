@@ -25,6 +25,13 @@
   margin-left: 40px;
   padding-left: 0;
 }
+.outerwrapper .widget-footnote {
+  margin-left: 40px;
+  padding-left: 0;
+  padding-bottom: 10px;
+  font-size: 90%;
+  line-height: 1.4em;
+}
 .outerwrapper .chart, .outerwrapper .widget-slider {
   position: relative;
 }
@@ -96,10 +103,13 @@
   padding-left: 40px;
   padding-right: 20px;
 }
+.outerwrapper .key ul {
+  margin-bottom: 0;
+}
 .outerwrapper .key ul li {
   display: inline-block;
   padding: 3px 10px 1px 0;
-  margin: 5px;
+  margin: 5px 8px 5px 0;
   border-bottom-width: 5px;
   border-bottom-style: solid;
 }
@@ -124,7 +134,9 @@
 <div class="outerwrapper" id="interd-graphic">
 	<h2>A measure of interdisciplinarity, by discipline and year</h2>
 
-	<p>In this chart, more interdisciplinary fields are in the top-right quadrant. [[sentence here to explain the broad trend(s) from 1950 -2000]]. A field’s position is determined by how much its papers cite outside disciplines (x-axis), and by how much outside disciplines subsequently cite the papers (y-axis). Papers from 2001–10 were assigned to disciplines and specialities on the basis of their journals, using a US National Science Foundation classification system.</p>
+	<p>In this chart, more interdisciplinary fields are in the top-right quadrant. [[sentence here to explain the broad trend(s) from 1950 -2000]]. A field’s position is determined by how much its papers cite outside disciplines (x-axis), and by how much outside disciplines subsequently cite the papers (y-axis).</p>
+
+	<p>Hover over the dots for more information. <a href="http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv" title="Download interd-data.csv">Click here</a> to download the data used to build this graphic as comma-separated values.</p>
 
 	<div class="chart">
 		<div class="widget-tooltip hidden" id="widget-tooltip">
@@ -143,6 +155,8 @@
 	<h3>Choose a discipline</h3>
 	
 	<div class="key" id="key"></div>
+
+	<p class="widget-footnote">Papers from 1950–2014 were assigned to disciplines and specialities on the basis of their journals, using a US National Science Foundation classification system.</p>
 
 </div>
 
@@ -695,8 +709,8 @@ BuildWidget.prototype.updateView = function() {
 };
 (function() {
 	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	// var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
-	var dataurl = "data/interd-data.csv";
+	var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	// var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */

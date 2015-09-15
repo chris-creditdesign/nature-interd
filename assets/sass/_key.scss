@@ -2,10 +2,14 @@
 	padding-left: $left;
 	padding-right: $right;
 
+	ul {
+		margin-bottom: 0;
+	}
+
 	ul li {
 		display: inline-block;
 		padding: 3px 10px 1px 0;
-		margin: 5px;
+		margin: 5px 8px 5px 0;
 
 		border-bottom-width: 5px;
 		border-bottom-style: solid;
