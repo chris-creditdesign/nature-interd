@@ -39,4 +39,39 @@ BuildWidget.prototype.buildAxes = function() {
 				return self.params.key.xAxisLabel;
 		});
 
+	this.xAxisGroup.append("line")
+		.attr("class", "quadrant-line")
+		.attr("x1", (this.params.width / 2))
+		.attr("y1", 0)
+		.attr("x2", (this.params.width / 2))
+		.attr("y2", -this.params.height);
+
+	if (this.params.width > 350) {
+		this.xAxisGroup.append("text")
+			.style("text-anchor","start")
+			.attr("dx", 15)
+			.attr("dy", -15)
+			.style("font-size", "20px")
+			.style("fill", this.params.uiColour.lightGrey)
+			.text("Less interdisciplinary");
+
+		this.xAxisGroup.append("text")
+			.attr("transform", "translate(" + this.params.width + "," + (this.params.height * -1) + ")")
+			.style("text-anchor","end")
+			.attr("dx", -15)
+			.attr("dy", 30)
+			.style("font-size", "20px")
+			.style("fill", this.params.uiColour.lightGrey)
+			.text("More interdisciplinary");		
+	}
+
+
+	this.yAxisGroup.append("line")
+		.attr("class", "quadrant-line")
+		.attr("x1", 0)
+		.attr("y1", (this.params.height / 2))
+		.attr("x2", this.params.width)
+		.attr("y2", (this.params.height / 2));
+
+
 };

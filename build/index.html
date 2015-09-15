@@ -344,6 +344,41 @@ BuildWidget.prototype.buildAxes = function() {
 				return self.params.key.xAxisLabel;
 		});
 
+	this.xAxisGroup.append("line")
+		.attr("class", "quadrant-line")
+		.attr("x1", (this.params.width / 2))
+		.attr("y1", 0)
+		.attr("x2", (this.params.width / 2))
+		.attr("y2", -this.params.height);
+
+	if (this.params.width > 350) {
+		this.xAxisGroup.append("text")
+			.style("text-anchor","start")
+			.attr("dx", 15)
+			.attr("dy", -15)
+			.style("font-size", "20px")
+			.style("fill", this.params.uiColour.lightGrey)
+			.text("Less interdisciplinary");
+
+		this.xAxisGroup.append("text")
+			.attr("transform", "translate(" + this.params.width + "," + (this.params.height * -1) + ")")
+			.style("text-anchor","end")
+			.attr("dx", -15)
+			.attr("dy", 30)
+			.style("font-size", "20px")
+			.style("fill", this.params.uiColour.lightGrey)
+			.text("More interdisciplinary");		
+	}
+
+
+	this.yAxisGroup.append("line")
+		.attr("class", "quadrant-line")
+		.attr("x1", 0)
+		.attr("y1", (this.params.height / 2))
+		.attr("x2", this.params.width)
+		.attr("y2", (this.params.height / 2));
+
+
 };
 BuildWidget.prototype.buildGraphic = function() {
 	this.svg = d3.select(this.target + "> .chart").append("svg")
@@ -709,8 +744,8 @@ BuildWidget.prototype.updateView = function() {
 };
 (function() {
 	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
-	// var dataurl = "data/interd-data.csv";
+	// var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
