@@ -9,6 +9,8 @@ BuildWidget.prototype.build = function() {
 	this.buildScales();
 	this.buildAxes();
 	this.enterScatterPlot();
+	this.enterTrails();
+	this.buildShowTrail();
 	this.buildInput();
 	this.buildTooltip();
 
@@ -22,4 +24,8 @@ BuildWidget.prototype.destroy = function() {
 	this.sliderSvg.remove();
 	this.dropdown.remove();
 	this.checkboxList.remove();
+
+	while (this.data.showTrail.length > 0) {
+		this.data.showTrail.pop();
+	}
 };

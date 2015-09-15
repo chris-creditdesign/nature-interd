@@ -213,11 +213,40 @@ function buildData (data) {
 		return parseInt(a.key, 10) - parseInt(b.key, 10);
 	});
 
+	var trail = d3.nest()
+		.key(function (d) {
+			return d.Specialty;
+		})
+		.entries(data);
+
+	trail.forEach(function (element, index, array) {
+		var myArray = [];
+		element.dis = element.values[0].Discipline.toLowerCase().split(' ').join("_");
+		element.Discipline = element.values[0].Discipline;
+		element.Specialty = element.values[0].Specialty;
+
+		element.values.sort(function (a, b) {
+			return parseInt(a.Year, 10) - parseInt(b.Year, 10);
+		});
+
+		element.values.forEach(function (element, index, array) {
+			var myObject = {};
+			myObject.cit = element.cit;
+			myObject.ref = element.ref;
+			myArray.push(myObject);
+		});
+
+		element.trail = myArray;
+
+	});
+
 	return {
 		data: nest,
 		discipline: disciplineArray,
 		disciplineShortName: discShort,
-		years: yearArray
+		years: yearArray,
+		trails: trail,
+		showTrail: []
 	};
 }
 function buildParams (argument) {
@@ -365,6 +394,11 @@ BuildWidget.prototype.buildGraphic = function() {
 	this.xAxisGroup = this.svg.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")");
+
+	this.trailsGroup = this.svg.append("g")
+							.attr("class","trailsGroup")
+							.attr("clip-path", "url(#clip)")
+							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
 
 	this.scatterGroup = this.svg.append("g")
 							.attr("class","scatterGroup")
@@ -529,6 +563,7 @@ BuildWidget.prototype.buildColourList = function (target) {
 	});
 };
 BuildWidget.prototype.buildScales = function(first_argument) {
+	var self = this;
 
 	this.yScale = d3.scale.linear()
 		.range([this.params.height, 0])
@@ -547,6 +582,15 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 		.domain([d3.min(this.data.years),d3.max(this.data.years)])
 		.clamp(true);
 
+	this.line = d3.svg.line()
+	    .x(function(d){
+	    	return self.xScale(d.ref);
+	    })
+	    .y(function(d){
+	    	return self.yScale(d.cit);
+	    });
+	 //    .interpolate("cardinal-closed")
+		// .tension(1.0);
 };
 BuildWidget.prototype.enterScatterPlot = function() {
 	var self = this;
@@ -576,8 +620,6 @@ BuildWidget.prototype.enterScatterPlot = function() {
 				return false;
 			}
 		});
-
-
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {
@@ -612,6 +654,22 @@ BuildWidget.prototype.exitScatterPlot = function () {
 		.remove();
 };
 
+BuildWidget.prototype.buildShowTrail = function() {
+	var self = this;
+
+	this.scatterGroup.selectAll("circle")
+		.on("click", function (d) {
+			var index = self.data.showTrail.indexOf(d.Specialty);
+
+			if (index === -1 ) {
+				self.data.showTrail.push(d.Specialty);
+			} else {
+				self.data.showTrail.splice(index, 1);
+			}
+
+			self.updateView();
+		});
+};
 BuildWidget.prototype.buildTooltip = function() {
 	var self = this;
 
@@ -651,6 +709,49 @@ BuildWidget.prototype.hideTooltip = function () {
 	d3.select("#widget-tooltip").classed("hidden", true);
 };
 
+BuildWidget.prototype.enterTrails = function() {
+	var self = this;
+
+	this.trailsGroup.selectAll("path")
+		.data(self.data.trails, function (d) {
+			return d.key;
+		})
+		.enter()
+	  .append("path")
+		.attr("d", function (d) {
+			return self.line(d.trail);
+		})
+		.attr("fill", "none")
+		.attr("stroke-weight", 1)
+		.attr("stroke", function (d) {
+			return self.colourScale(d.Discipline);
+		})
+		// .attr("stroke-opacity", 0.5)
+		.classed("hidden", function (d) {
+			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
+				return true;
+			} else if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+};
+
+BuildWidget.prototype.updateTrails = function () {
+	var self = this;
+
+	this.trailsGroup.selectAll("path")
+		.classed("hidden", function (d) {
+			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
+				return true;
+			} else if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+};
 BuildWidget.prototype.buildYearLabel = function() {
 	this.yearLabel = this.svg.append("text")
 		.attr("transform", "translate(" + this.params.margin.left + "," + this.params.margin.top + ")")
@@ -672,6 +773,8 @@ BuildWidget.prototype.build = function() {
 	this.buildScales();
 	this.buildAxes();
 	this.enterScatterPlot();
+	this.enterTrails();
+	this.buildShowTrail();
 	this.buildInput();
 	this.buildTooltip();
 
@@ -685,6 +788,10 @@ BuildWidget.prototype.destroy = function() {
 	this.sliderSvg.remove();
 	this.dropdown.remove();
 	this.checkboxList.remove();
+
+	while (this.data.showTrail.length > 0) {
+		this.data.showTrail.pop();
+	}
 };
 
 BuildWidget.prototype.updateView = function() {
@@ -703,14 +810,19 @@ BuildWidget.prototype.updateView = function() {
 	this.enterScatterPlot();
 	this.updateScatterPlot();
 	this.exitScatterPlot();
+
+	this.enterTrails();
+	this.updateTrails();
+	this.buildShowTrail();
+
 	this.hideTooltip();
 	this.buildTooltip();
 
 };
 (function() {
 	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
-	// var dataurl = "data/interd-data.csv";
+	// var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */

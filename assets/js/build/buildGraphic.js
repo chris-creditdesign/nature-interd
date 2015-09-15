@@ -19,6 +19,11 @@ BuildWidget.prototype.buildGraphic = function() {
 		.attr("class", "x axis")
 		.attr("transform", "translate(" + this.params.margin.left + "," + (this.params.margin.top + this.params.height) + ")");
 
+	this.trailsGroup = this.svg.append("g")
+							.attr("class","trailsGroup")
+							.attr("clip-path", "url(#clip)")
+							.attr("transform","translate(" + this.params.margin.left + "," + this.params.margin.top + ")");	
+
 	this.scatterGroup = this.svg.append("g")
 							.attr("class","scatterGroup")
 							.attr("clip-path", "url(#clip)")

@@ -26,8 +26,6 @@ BuildWidget.prototype.enterScatterPlot = function() {
 				return false;
 			}
 		});
-
-
 };
 
 BuildWidget.prototype.updateScatterPlot = function() {

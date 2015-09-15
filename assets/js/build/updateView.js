@@ -14,6 +14,11 @@ BuildWidget.prototype.updateView = function() {
 	this.enterScatterPlot();
 	this.updateScatterPlot();
 	this.exitScatterPlot();
+
+	this.enterTrails();
+	this.updateTrails();
+	this.buildShowTrail();
+
 	this.hideTooltip();
 	this.buildTooltip();
 
