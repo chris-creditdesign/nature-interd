@@ -167,9 +167,8 @@
 </style>
 <div class="status-message">
 	<p>This interactive graphic requires a modern browser (e.g. Chrome, Safari or Firefox) with javascript enabled.</p>
-	<p>The data used to build this graphic can be downloaded as comma-separated values in plain-text form here: <a href="#" title="Download xxx  XXK">xxxx.txt</a>.</p>
+	<p>The data used to build this graphic can be downloaded as comma-separated values in plain-text form here: <a href="http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv" title="Download xxx  XXK">interd-data.csv</a>.</p>
 </div>
-
 
 <div class="outerwrapper" id="interd-graphic">
 	<h2>A measure of interdisciplinarity, by discipline and year</h2>
@@ -710,7 +709,8 @@ BuildWidget.prototype.updateView = function() {
 };
 (function() {
 	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	var dataurl = "http://nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	// var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
@@ -733,7 +733,7 @@ BuildWidget.prototype.updateView = function() {
 					widget.build();
 				}
 
-				$( window ).on("resize", function() {
+				$( window ).resize(function() {
 					if($(window).width() != width){ 
 						width = $(window).width();
 						didResize = true;
