@@ -25,8 +25,4 @@ BuildWidget.prototype.destroy = function() {
 	this.sliderSvg.remove();
 	this.dropdown.remove();
 	this.checkboxList.remove();
-
-	while (this.data.showTrail.length > 0) {
-		this.data.showTrail.pop();
-	}
 };

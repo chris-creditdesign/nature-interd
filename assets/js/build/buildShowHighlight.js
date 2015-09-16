@@ -10,9 +10,7 @@ BuildWidget.prototype.buildShowHighlight = function() {
 			} else {
 				self.data.highlighted.splice(index, 1);
 			}
-
-			console.log(self.data.highlighted);
-
+			
 			self.updateView();
 		});
 };
