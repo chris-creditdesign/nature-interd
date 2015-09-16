@@ -14,9 +14,10 @@
   min-height: 900px;
   position: relative;
   border: 1px solid #c8c7cf;
+  margin: 0 0 1.65em;
   display: none;
 }
-.outerwrapper h2, .outerwrapper h3, .outerwrapper p {
+.outerwrapper h2, .outerwrapper h3, .outerwrapper p, .outerwrapper ul {
   padding: 10px 10px 0 10px;
   margin: 0;
 }
@@ -24,15 +25,25 @@
   margin-left: 40px;
   padding-left: 0;
 }
+.outerwrapper ul {
+  padding-left: 30px;
+  padding-right: 10px;
+}
+.outerwrapper li {
+  list-style: disc;
+}
 .outerwrapper .widget-footnote {
   margin-left: 40px;
-  padding-left: 0;
   padding-bottom: 10px;
-  font-size: 90%;
+}
+.outerwrapper .widget-footnote p {
+  font-size: 80%;
   line-height: 1.4em;
+  padding-left: 0;
 }
 .outerwrapper .chart, .outerwrapper .widget-slider {
   position: relative;
+  margin-top: 10px;
 }
 .outerwrapper .chart .axis path, .outerwrapper .chart .axis line, .outerwrapper .widget-slider .axis path, .outerwrapper .widget-slider .axis line {
   fill: none;
@@ -104,6 +115,7 @@
 }
 .outerwrapper .key ul {
   margin-bottom: 0;
+  padding-left: 0;
 }
 .outerwrapper .key ul li {
   display: inline-block;
