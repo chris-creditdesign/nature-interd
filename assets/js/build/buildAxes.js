@@ -18,7 +18,6 @@ BuildWidget.prototype.buildAxes = function() {
 		.orient("bottom")
 		.tickFormat(d3.format("d"));
 
-
 	this.yAxisGroup.call(this.yAxis)
 	  .append("g")
 		.attr("class", "axisLabel")
@@ -65,13 +64,10 @@ BuildWidget.prototype.buildAxes = function() {
 			.text("More interdisciplinary");		
 	}
 
-
 	this.yAxisGroup.append("line")
 		.attr("class", "quadrant-line")
 		.attr("x1", 0)
 		.attr("y1", (this.params.height / 2))
 		.attr("x2", this.params.width)
 		.attr("y2", (this.params.height / 2));
-
-
 };

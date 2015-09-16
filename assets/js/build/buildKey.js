@@ -46,7 +46,6 @@ BuildWidget.prototype.buildColourList = function (target) {
 			return makeSafe(d);
 		});
 
-
 	this.checkboxes.on("change", function () {
 		var checkbox = d3.select(this).select("input");
 
@@ -54,10 +53,7 @@ BuildWidget.prototype.buildColourList = function (target) {
 			console.log();
 			thisProp = checkbox.node().checked;
 
-
-		
 			self.checkboxes.each(function () {
-				// this.checked = thisProp;
 				d3.select(this).select("input").node().checked = thisProp;
 			});
 		}

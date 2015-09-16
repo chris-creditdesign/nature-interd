@@ -82,6 +82,7 @@ function buildData (data) {
 		disciplineShortName: discShort,
 		years: yearArray,
 		trails: trail,
-		showTrail: []
+		showTrail: [],
+		year: 50
 	};
 }

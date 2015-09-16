@@ -31,7 +31,8 @@ BuildWidget.prototype.buildInput = function() {
 
 	var handle = slider.append("circle")
 		.attr("class", "handle")
-		.attr("transform", "translate(0, " + 10 + ")" )
+		.attr("transform", "translate(0," + 10 + ")" )
+		.attr("cx", self.yearScale(self.data.years[self.data.year]))
 		.attr("r", 10);
 
 	this.dropdown.selectAll("option")
@@ -41,6 +42,8 @@ BuildWidget.prototype.buildInput = function() {
 		.attr("value", function (d) { return d; })
 		.text(function (d) { return d; });
 	
+	this.dropdown.node().value = this.data.years[this.data.year];
+
 	this.dropdown.on("change", function () {
 			yearNum = parseInt(this.value, 10);
 			brush.extent([yearNum, yearNum]);
@@ -55,26 +58,14 @@ BuildWidget.prototype.buildInput = function() {
 			brush.extent([value, value]);
 		}
 
-		self.params.year = self.data.years.indexOf(Math.round(value));
+		self.data.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();
-		self.yearLabel.text(self.data.years[self.params.year]);
+		self.yearLabel.text(self.data.years[self.data.year]);
 
 		handle.attr("cx", self.yearScale(value));
 		self.dropdown.node().value = Math.round(value);
+
+
 	}
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

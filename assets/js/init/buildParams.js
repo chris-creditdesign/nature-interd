@@ -15,8 +15,6 @@ function buildParams (argument) {
 		"#951b81",  /* Physics */
 		"#b7195d",  /* Psychology */
 		"#a99892" /* Social Sciences */
-
-		// Need two more
 	];
 
 	params.uiColour = {
@@ -42,7 +40,6 @@ function buildParams (argument) {
 		
 	params.sliderHeight = 50;
 
-	params.year = 0;
-
 	return params;
 }
+

@@ -15,7 +15,6 @@ BuildWidget.prototype.enterTrails = function() {
 		.attr("stroke", function (d) {
 			return self.colourScale(d.Discipline);
 		})
-		// .attr("stroke-opacity", 0.5)
 		.classed("hidden", function (d) {
 			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
 				return true;

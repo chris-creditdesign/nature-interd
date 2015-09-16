@@ -9,8 +9,7 @@ BuildWidget.prototype.build = function() {
 	this.buildScales();
 	this.buildAxes();
 	this.enterScatterPlot();
-	this.enterTrails();
-	this.buildShowTrail();
+
 	this.buildInput();
 	this.buildTooltip();
 

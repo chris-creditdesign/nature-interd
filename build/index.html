@@ -315,9 +315,11 @@ function buildData (data) {
 		disciplineShortName: discShort,
 		years: yearArray,
 		trails: trail,
-		showTrail: []
+		showTrail: [],
+		year: 50
 	};
 }
+
 function buildParams (argument) {
 	var params = {};
 
@@ -335,8 +337,6 @@ function buildParams (argument) {
 		"#951b81",  /* Physics */
 		"#b7195d",  /* Psychology */
 		"#a99892" /* Social Sciences */
-
-		// Need two more
 	];
 
 	params.uiColour = {
@@ -362,10 +362,10 @@ function buildParams (argument) {
 		
 	params.sliderHeight = 50;
 
-	params.year = 0;
-
 	return params;
 }
+
+
 BuildWidget.prototype.buildAxes = function() {
 	var self = this;
 
@@ -385,7 +385,6 @@ BuildWidget.prototype.buildAxes = function() {
 		.ticks(this.params.width / this.params.yearPixelsPerTick)
 		.orient("bottom")
 		.tickFormat(d3.format("d"));
-
 
 	this.yAxisGroup.call(this.yAxis)
 	  .append("g")
@@ -433,16 +432,14 @@ BuildWidget.prototype.buildAxes = function() {
 			.text("More interdisciplinary");		
 	}
 
-
 	this.yAxisGroup.append("line")
 		.attr("class", "quadrant-line")
 		.attr("x1", 0)
 		.attr("y1", (this.params.height / 2))
 		.attr("x2", this.params.width)
 		.attr("y2", (this.params.height / 2));
-
-
 };
+
 BuildWidget.prototype.buildGraphic = function() {
 	this.svg = d3.select(this.target + "> .chart").append("svg")
 		.attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
@@ -482,6 +479,7 @@ BuildWidget.prototype.buildGraphic = function() {
 	this.dropdown = d3.select(this.target + "> .widget-selector")
 		.append("select");
 };
+
 BuildWidget.prototype.buildInput = function() {
 	var self = this;
 	var yearNum;
@@ -515,7 +513,8 @@ BuildWidget.prototype.buildInput = function() {
 
 	var handle = slider.append("circle")
 		.attr("class", "handle")
-		.attr("transform", "translate(0, " + 10 + ")" )
+		.attr("transform", "translate(0," + 10 + ")" )
+		.attr("cx", self.yearScale(self.data.years[self.data.year]))
 		.attr("r", 10);
 
 	this.dropdown.selectAll("option")
@@ -525,6 +524,8 @@ BuildWidget.prototype.buildInput = function() {
 		.attr("value", function (d) { return d; })
 		.text(function (d) { return d; });
 	
+	this.dropdown.node().value = this.data.years[this.data.year];
+
 	this.dropdown.on("change", function () {
 			yearNum = parseInt(this.value, 10);
 			brush.extent([yearNum, yearNum]);
@@ -539,29 +540,17 @@ BuildWidget.prototype.buildInput = function() {
 			brush.extent([value, value]);
 		}
 
-		self.params.year = self.data.years.indexOf(Math.round(value));
+		self.data.year = self.data.years.indexOf(Math.round(value));
 		self.updateView();
-		self.yearLabel.text(self.data.years[self.params.year]);
+		self.yearLabel.text(self.data.years[self.data.year]);
 
 		handle.attr("cx", self.yearScale(value));
 		self.dropdown.node().value = Math.round(value);
+
+
 	}
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 BuildWidget.prototype.buildColourList = function (target) {
 	var self = this;
@@ -611,7 +600,6 @@ BuildWidget.prototype.buildColourList = function (target) {
 			return makeSafe(d);
 		});
 
-
 	this.checkboxes.on("change", function () {
 		var checkbox = d3.select(this).select("input");
 
@@ -619,10 +607,7 @@ BuildWidget.prototype.buildColourList = function (target) {
 			console.log();
 			thisProp = checkbox.node().checked;
 
-
-		
 			self.checkboxes.each(function () {
-				// this.checked = thisProp;
 				d3.select(this).select("input").node().checked = thisProp;
 			});
 		}
@@ -631,6 +616,7 @@ BuildWidget.prototype.buildColourList = function (target) {
 
 	});
 };
+
 BuildWidget.prototype.buildScales = function(first_argument) {
 	var self = this;
 
@@ -658,14 +644,13 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 	    .y(function(d){
 	    	return self.yScale(d.cit);
 	    });
-	 //    .interpolate("cardinal-closed")
-		// .tension(1.0);
 };
+
 BuildWidget.prototype.enterScatterPlot = function() {
 	var self = this;
 	
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.enter()
@@ -695,7 +680,7 @@ BuildWidget.prototype.updateScatterPlot = function() {
 	var self = this;
 
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.attr("cx", function (d) {
@@ -715,7 +700,7 @@ BuildWidget.prototype.updateScatterPlot = function() {
 
 BuildWidget.prototype.exitScatterPlot = function () {
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.exit()
@@ -739,6 +724,7 @@ BuildWidget.prototype.buildShowTrail = function() {
 			self.updateView();
 		});
 };
+
 BuildWidget.prototype.buildTooltip = function() {
 	var self = this;
 
@@ -795,7 +781,6 @@ BuildWidget.prototype.enterTrails = function() {
 		.attr("stroke", function (d) {
 			return self.colourScale(d.Discipline);
 		})
-		// .attr("stroke-opacity", 0.5)
 		.classed("hidden", function (d) {
 			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
 				return true;
@@ -821,6 +806,7 @@ BuildWidget.prototype.updateTrails = function () {
 			}
 		});
 };
+
 BuildWidget.prototype.buildYearLabel = function() {
 	this.yearLabel = this.svg.append("text")
 		.attr("transform", "translate(" + this.params.margin.left + "," + this.params.margin.top + ")")
@@ -829,8 +815,9 @@ BuildWidget.prototype.buildYearLabel = function() {
 		.attr("dy", 40)
 		.style("font-size", "30px")
 		.style("fill", this.params.uiColour.darkGrey)
-		.text(this.data.years[this.params.year]);
+		.text(this.data.years[this.data.year]);
 };
+
 function BuildWidget (target, params, data) {
 	this.target = target;
 	this.params = params;
@@ -842,8 +829,7 @@ BuildWidget.prototype.build = function() {
 	this.buildScales();
 	this.buildAxes();
 	this.enterScatterPlot();
-	this.enterTrails();
-	this.buildShowTrail();
+
 	this.buildInput();
 	this.buildTooltip();
 
@@ -880,18 +866,14 @@ BuildWidget.prototype.updateView = function() {
 	this.updateScatterPlot();
 	this.exitScatterPlot();
 
-	this.enterTrails();
-	this.updateTrails();
-	this.buildShowTrail();
-
 	this.hideTooltip();
 	this.buildTooltip();
-
 };
+
 (function() {
 	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
-	// var dataurl = "data/interd-data.csv";
+	// var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
+	var dataurl = "data/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
@@ -946,6 +928,7 @@ BuildWidget.prototype.updateView = function() {
 		}
 	}, 60);
 })();
+
 </script>
 <!--<![endif]-->
 <!-- ========= PASTED POLOPOLY FOOTER BELOW ========= -->

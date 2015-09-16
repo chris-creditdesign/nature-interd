@@ -25,6 +25,4 @@ BuildWidget.prototype.buildScales = function(first_argument) {
 	    .y(function(d){
 	    	return self.yScale(d.cit);
 	    });
-	 //    .interpolate("cardinal-closed")
-		// .tension(1.0);
 };

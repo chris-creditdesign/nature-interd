@@ -2,7 +2,7 @@ BuildWidget.prototype.enterScatterPlot = function() {
 	var self = this;
 	
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.enter()
@@ -32,7 +32,7 @@ BuildWidget.prototype.updateScatterPlot = function() {
 	var self = this;
 
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.attr("cx", function (d) {
@@ -52,7 +52,7 @@ BuildWidget.prototype.updateScatterPlot = function() {
 
 BuildWidget.prototype.exitScatterPlot = function () {
 	this.scatterGroup.selectAll("circle")
-		.data(this.data.data[this.params.year].values, function (d) {
+		.data(this.data.data[this.data.year].values, function (d) {
 			return d.Specialty;
 		})
 		.exit()
