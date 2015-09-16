@@ -39,6 +39,8 @@ function buildData (data) {
 		return a - b;
 	});
 
+	console.log();
+
 	var nest = d3.nest()
 		.key(function (d) {
 			return d.Year;
@@ -55,6 +57,6 @@ function buildData (data) {
 		disciplineShortName: discShort,
 		years: yearArray,
 		highlighted: [],
-		year: 50
+		year: (yearArray.length - 1)
 	};
 }

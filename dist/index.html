@@ -182,7 +182,7 @@
 		</div>
 	</div>
 
-	<h3>Choose a year:</h3>
+	<h3>Choose a year</h3>
 
 	<div class="widget-slider"></div>
 
@@ -242,6 +242,8 @@ function buildData (data) {
 		return a - b;
 	});
 
+	console.log();
+
 	var nest = d3.nest()
 		.key(function (d) {
 			return d.Year;
@@ -258,7 +260,7 @@ function buildData (data) {
 		disciplineShortName: discShort,
 		years: yearArray,
 		highlighted: [],
-		year: 50
+		year: (yearArray.length - 1)
 	};
 }
 
@@ -708,13 +710,11 @@ BuildWidget.prototype.buildTooltip = function() {
 			self.hideTooltip();
 		});
 
-	console.log(this.params.width);
-
 	d3.select("#health-tooltip")
 		.style("top",  (self.yScale(85) + this.params.margin.top) + "px")
 		.style("right", (self.xScale(55) + this.params.margin.right) + "px")
 		.classed("hidden", function () {
-			if (self.data.year === 50 && self.params.width > 500) {
+			if (self.data.year === (self.data.years.length - 1) && self.params.width > 500) {
 				return false;
 			} else {
 				return true;
@@ -722,10 +722,10 @@ BuildWidget.prototype.buildTooltip = function() {
 		});
 
 	d3.select("#medicine-tooltip")
-		.style("top",  (self.yScale(25) + this.params.margin.top) + "px")
-		.style("right", (self.xScale(5) + this.params.margin.right) + "px")
+		.style("top",  (self.yScale(27) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(3) + this.params.margin.right) + "px")
 		.classed("hidden", function () {
-			if (self.data.year === 50 && self.params.width > 500) {
+			if (self.data.year === (self.data.years.length - 1) && self.params.width > 500) {
 				return false;
 			} else {
 				return true;

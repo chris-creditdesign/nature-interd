@@ -28,13 +28,11 @@ BuildWidget.prototype.buildTooltip = function() {
 			self.hideTooltip();
 		});
 
-	console.log(this.params.width);
-
 	d3.select("#health-tooltip")
 		.style("top",  (self.yScale(85) + this.params.margin.top) + "px")
 		.style("right", (self.xScale(55) + this.params.margin.right) + "px")
 		.classed("hidden", function () {
-			if (self.data.year === 50 && self.params.width > 500) {
+			if (self.data.year === (self.data.years.length - 1) && self.params.width > 500) {
 				return false;
 			} else {
 				return true;
@@ -42,10 +40,10 @@ BuildWidget.prototype.buildTooltip = function() {
 		});
 
 	d3.select("#medicine-tooltip")
-		.style("top",  (self.yScale(25) + this.params.margin.top) + "px")
-		.style("right", (self.xScale(5) + this.params.margin.right) + "px")
+		.style("top",  (self.yScale(27) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(3) + this.params.margin.right) + "px")
 		.classed("hidden", function () {
-			if (self.data.year === 50 && self.params.width > 500) {
+			if (self.data.year === (self.data.years.length - 1) && self.params.width > 500) {
 				return false;
 			} else {
 				return true;
