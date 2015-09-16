@@ -49,40 +49,12 @@ function buildData (data) {
 		return parseInt(a.key, 10) - parseInt(b.key, 10);
 	});
 
-	var trail = d3.nest()
-		.key(function (d) {
-			return d.Specialty;
-		})
-		.entries(data);
-
-	trail.forEach(function (element, index, array) {
-		var myArray = [];
-		element.dis = element.values[0].Discipline.toLowerCase().split(' ').join("_");
-		element.Discipline = element.values[0].Discipline;
-		element.Specialty = element.values[0].Specialty;
-
-		element.values.sort(function (a, b) {
-			return parseInt(a.Year, 10) - parseInt(b.Year, 10);
-		});
-
-		element.values.forEach(function (element, index, array) {
-			var myObject = {};
-			myObject.cit = element.cit;
-			myObject.ref = element.ref;
-			myArray.push(myObject);
-		});
-
-		element.trail = myArray;
-
-	});
-
 	return {
 		data: nest,
 		discipline: disciplineArray,
 		disciplineShortName: discShort,
 		years: yearArray,
-		trails: trail,
-		showTrail: [],
+		highlighted: [],
 		year: 50
 	};
 }

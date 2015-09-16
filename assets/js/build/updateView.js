@@ -17,4 +17,6 @@ BuildWidget.prototype.updateView = function() {
 
 	this.hideTooltip();
 	this.buildTooltip();
+
+	this.buildShowHighlight();
 };

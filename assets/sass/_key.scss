@@ -18,48 +18,13 @@
 		label {
 			cursor: pointer;
 		}
-		
 	}
 }
 
 input[type="checkbox"] {
-	// margin: 10px;
-	
-	// border-radius: 50%;
 	cursor: pointer;
-	// display: inline-block;
-	// height: 20px;
 	margin-right: 5px;
-	// position: relative;
-	// width: 20px;
-	// -webkit-appearance: none;
-	// outline: none;
-
-	// &:active, &:focus {
-	// 	background-color: #222;
-	// }
 }
-
-
-input[type="checkbox"]:after {
-	// content: "\2714";
-	// font-size: 1em;
-	// display: inline-block;
-	// left: 0.3em;
-	// position: relative;
-	// top: 0.15em;
-	// color: #fff;
-	// opacity: 0;
-}
-
-
-// input[type="checkbox"]:after {
-//     color: #666;
-// }
-
-// input[type="checkbox"]:active:after, input[type="checkbox"]:focus:after  {
-//     color: #222;
-// }
 
 input[type="checkbox"]:checked:after {
 	display: inline-block;

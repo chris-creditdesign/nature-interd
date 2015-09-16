@@ -25,6 +25,13 @@ BuildWidget.prototype.enterScatterPlot = function() {
 			} else {
 				return false;
 			}
+		})
+		.classed("dot-selected", function (d) {
+			if (self.data.highlighted.indexOf(d.Specialty) === -1) {
+				return false;
+			} else {
+				return true;
+			}
 		});
 };
 
@@ -46,6 +53,13 @@ BuildWidget.prototype.updateScatterPlot = function() {
 				return true;
 			} else {
 				return false;
+			}
+		})
+		.classed("dot-selected", function (d) {
+			if (self.data.highlighted.indexOf(d.Specialty) === -1) {
+				return false;
+			} else {
+				return true;
 			}
 		});
 };

@@ -61,6 +61,9 @@
   -webkit-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
+.outerwrapper .chart .dot-selected, .outerwrapper .widget-slider .dot-selected {
+  stroke-width: 3px;
+}
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;
@@ -153,7 +156,7 @@
 		<li>Over time, disciplines tend to cluster towards the diagonal. That’s partly a statistical artefact: emerging fields are small with few references from other fields, and then settle into position as they become larger and established.</li>
 	</ul>
 
-	<p>Hover over the dots for more information. <a href="http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv" title="Download interd-data.csv">Click here</a> to download the data used to build this graphic as comma-separated values.</p>
+	<p>Hover over the dots to see specialities. <a href="http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv" title="Download interd-data.csv">Click here</a> to download the data used to build this graphic as comma-separated values.</p>
 
 	<div class="chart">
 		<div class="widget-tooltip hidden" id="widget-tooltip">
@@ -175,7 +178,7 @@
 
 	<div class="widget-footnote">
 		<p>Papers from 1950-2014 were assigned to disciplines and specialities on the basis of their journals, using a classification system designed for the US National Science Foundation.</p>
-		<p>Raw data from Thomson Reuters’ Web of Science, analysed by Cassidy Sugimoto (Indiana University), Juan Zhang (University of Quebec), Yves Gingras & Vincent Lariviere (University of Montreal). Data from personal communication, forming the basis of charts published in  V. LARIVIÈRE & Y. GINGRAS IN BEYOND BIBLIOMETRICS (EDS B. CRONIN & C. R. SUGIMOTO) 187–200 (MIT PRESS, 2014).</p>
+		<p>Raw data from Thomson Reuters’ Web of Science, analysed by Cassidy Sugimoto (Indiana University), Juan Zhang (University of Quebec), Yves Gingras & Vincent Lariviere (University of Montreal). Data from personal communication, forming the basis of charts published in  V. Larivière & Y. Gingras in Beyond Bibliometrics (EDS B. Cronin & C. R. Sugimoto) 187–200 (MIT Press, 2014).</p>
 	</div>
 
 </div>
@@ -233,40 +236,12 @@ function buildData (data) {
 		return parseInt(a.key, 10) - parseInt(b.key, 10);
 	});
 
-	var trail = d3.nest()
-		.key(function (d) {
-			return d.Specialty;
-		})
-		.entries(data);
-
-	trail.forEach(function (element, index, array) {
-		var myArray = [];
-		element.dis = element.values[0].Discipline.toLowerCase().split(' ').join("_");
-		element.Discipline = element.values[0].Discipline;
-		element.Specialty = element.values[0].Specialty;
-
-		element.values.sort(function (a, b) {
-			return parseInt(a.Year, 10) - parseInt(b.Year, 10);
-		});
-
-		element.values.forEach(function (element, index, array) {
-			var myObject = {};
-			myObject.cit = element.cit;
-			myObject.ref = element.ref;
-			myArray.push(myObject);
-		});
-
-		element.trail = myArray;
-
-	});
-
 	return {
 		data: nest,
 		discipline: disciplineArray,
 		disciplineShortName: discShort,
 		years: yearArray,
-		trails: trail,
-		showTrail: [],
+		highlighted: [],
 		year: 50
 	};
 }
@@ -497,10 +472,7 @@ BuildWidget.prototype.buildInput = function() {
 
 		handle.attr("cx", self.yearScale(value));
 		self.dropdown.node().value = Math.round(value);
-
-
 	}
-
 };
 
 BuildWidget.prototype.buildColourList = function (target) {
@@ -624,6 +596,13 @@ BuildWidget.prototype.enterScatterPlot = function() {
 			} else {
 				return false;
 			}
+		})
+		.classed("dot-selected", function (d) {
+			if (self.data.highlighted.indexOf(d.Specialty) === -1) {
+				return false;
+			} else {
+				return true;
+			}
 		});
 };
 
@@ -646,6 +625,13 @@ BuildWidget.prototype.updateScatterPlot = function() {
 			} else {
 				return false;
 			}
+		})
+		.classed("dot-selected", function (d) {
+			if (self.data.highlighted.indexOf(d.Specialty) === -1) {
+				return false;
+			} else {
+				return true;
+			}
 		});
 };
 
@@ -659,18 +645,20 @@ BuildWidget.prototype.exitScatterPlot = function () {
 		.remove();
 };
 
-BuildWidget.prototype.buildShowTrail = function() {
+BuildWidget.prototype.buildShowHighlight = function() {
 	var self = this;
 
 	this.scatterGroup.selectAll("circle")
 		.on("click", function (d) {
-			var index = self.data.showTrail.indexOf(d.Specialty);
+			var index = self.data.highlighted.indexOf(d.Specialty);
 
 			if (index === -1 ) {
-				self.data.showTrail.push(d.Specialty);
+				self.data.highlighted.push(d.Specialty);
 			} else {
-				self.data.showTrail.splice(index, 1);
+				self.data.highlighted.splice(index, 1);
 			}
+
+			console.log(self.data.highlighted);
 
 			self.updateView();
 		});
@@ -682,8 +670,6 @@ BuildWidget.prototype.buildTooltip = function() {
 	this.scatterGroup.selectAll("circle")
 		.on("mouseover", function (d) {
 			var myCircle = d3.select(this);
-
-			myCircle.attr("stroke-width", 2);
 
 			var tooltipWidth = parseInt(d3.select("#widget-tooltip").style("padding-left"),10) + parseInt(d3.select("#widget-tooltip").style("width"),10) + parseInt(d3.select("#widget-tooltip").style("padding-right"),10);
 
@@ -705,7 +691,6 @@ BuildWidget.prototype.buildTooltip = function() {
 
 		})
 		.on("mouseout", function (d) {
-			d3.select(this).attr("stroke-width", 0);
 			self.hideTooltip();
 		});
 };
@@ -713,49 +698,6 @@ BuildWidget.prototype.buildTooltip = function() {
 BuildWidget.prototype.hideTooltip = function () {
 	this.scatterGroup.selectAll("circle").attr("stroke-width", 0);
 	d3.select("#widget-tooltip").classed("hidden", true);
-};
-
-BuildWidget.prototype.enterTrails = function() {
-	var self = this;
-
-	this.trailsGroup.selectAll("path")
-		.data(self.data.trails, function (d) {
-			return d.key;
-		})
-		.enter()
-	  .append("path")
-		.attr("d", function (d) {
-			return self.line(d.trail);
-		})
-		.attr("fill", "none")
-		.attr("stroke-weight", 1)
-		.attr("stroke", function (d) {
-			return self.colourScale(d.Discipline);
-		})
-		.classed("hidden", function (d) {
-			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
-				return true;
-			} else if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-};
-
-BuildWidget.prototype.updateTrails = function () {
-	var self = this;
-
-	this.trailsGroup.selectAll("path")
-		.classed("hidden", function (d) {
-			if (self.data.showTrail.indexOf(d.Specialty) === -1) {
-				return true;
-			} else if (self.data.disciplineShortName.indexOf(d.dis) === -1) {
-				return true;
-			} else {
-				return false;
-			}
-		});
 };
 
 BuildWidget.prototype.buildYearLabel = function() {
@@ -783,6 +725,8 @@ BuildWidget.prototype.build = function() {
 
 	this.buildInput();
 	this.buildTooltip();
+
+	this.buildShowHighlight();
 
 	this.buildColourList("#key");
 	this.buildYearLabel();
@@ -819,6 +763,8 @@ BuildWidget.prototype.updateView = function() {
 
 	this.hideTooltip();
 	this.buildTooltip();
+
+	this.buildShowHighlight();
 };
 
 (function() {

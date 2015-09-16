@@ -64,8 +64,5 @@ BuildWidget.prototype.buildInput = function() {
 
 		handle.attr("cx", self.yearScale(value));
 		self.dropdown.node().value = Math.round(value);
-
-
 	}
-
 };

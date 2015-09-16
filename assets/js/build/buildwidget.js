@@ -13,6 +13,8 @@ BuildWidget.prototype.build = function() {
 	this.buildInput();
 	this.buildTooltip();
 
+	this.buildShowHighlight();
+
 	this.buildColourList("#key");
 	this.buildYearLabel();
 

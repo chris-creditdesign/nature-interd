@@ -21,6 +21,10 @@
 		-webkit-transition: opacity 0.2s ease;
 		transition: opacity 0.2s ease;
 	}
+
+	.dot-selected {
+		stroke-width: 3px;
+	}
 }
 
 .hidden {
@@ -46,8 +50,4 @@
 	.handle {
 		cursor: pointer;
 	}
-
-	// .slider rect.background {
-	// 	cursor: auto;
-	// }
 }

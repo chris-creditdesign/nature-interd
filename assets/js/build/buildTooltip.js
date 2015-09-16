@@ -5,8 +5,6 @@ BuildWidget.prototype.buildTooltip = function() {
 		.on("mouseover", function (d) {
 			var myCircle = d3.select(this);
 
-			myCircle.attr("stroke-width", 2);
-
 			var tooltipWidth = parseInt(d3.select("#widget-tooltip").style("padding-left"),10) + parseInt(d3.select("#widget-tooltip").style("width"),10) + parseInt(d3.select("#widget-tooltip").style("padding-right"),10);
 
 			var top = (parseFloat(myCircle.attr("cy")) + self.params.margin.top);
@@ -27,7 +25,6 @@ BuildWidget.prototype.buildTooltip = function() {
 
 		})
 		.on("mouseout", function (d) {
-			d3.select(this).attr("stroke-width", 0);
 			self.hideTooltip();
 		});
 };
