@@ -101,6 +101,15 @@
   font-weight: bold;
   color: #fff;
 }
+.outerwrapper .health, .outerwrapper .medicine {
+  color: #333;
+}
+.outerwrapper .health {
+  background-color: #79c6bf;
+}
+.outerwrapper .medicine {
+  background-color: #ffed00;
+}
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;

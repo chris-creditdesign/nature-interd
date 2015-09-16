@@ -23,6 +23,18 @@
 	}
 }
 
+.health, .medicine {
+	color: #333;
+}
+
+.health {
+	background-color: #79c6bf;
+}
+
+.medicine {
+	background-color: #ffed00;
+}
+
 .hidden {
 	opacity: 0;
 	pointer-events: none;

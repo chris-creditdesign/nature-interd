@@ -27,6 +27,30 @@ BuildWidget.prototype.buildTooltip = function() {
 		.on("mouseout", function (d) {
 			self.hideTooltip();
 		});
+
+	console.log(this.params.width);
+
+	d3.select("#health-tooltip")
+		.style("top",  (self.yScale(85) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(55) + this.params.margin.right) + "px")
+		.classed("hidden", function () {
+			if (self.data.year === 50 && self.params.width > 500) {
+				return false;
+			} else {
+				return true;
+			}
+		});
+
+	d3.select("#medicine-tooltip")
+		.style("top",  (self.yScale(25) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(5) + this.params.margin.right) + "px")
+		.classed("hidden", function () {
+			if (self.data.year === 50 && self.params.width > 500) {
+				return false;
+			} else {
+				return true;
+			}
+		});
 };
 
 BuildWidget.prototype.hideTooltip = function () {

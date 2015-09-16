@@ -151,6 +151,15 @@
   font-weight: bold;
   color: #fff;
 }
+.outerwrapper .health, .outerwrapper .medicine {
+  color: #333;
+}
+.outerwrapper .health {
+  background-color: #79c6bf;
+}
+.outerwrapper .medicine {
+  background-color: #ffed00;
+}
 .outerwrapper .hidden {
   opacity: 0;
   pointer-events: none;
@@ -208,6 +217,12 @@
 	<p>Hover over the dots to see specialities. <a href="http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv" title="Download interd-data.csv">Click here</a> to download the data used to build this graphic as comma-separated values.</p>
 
 	<div class="chart">
+		<div class="widget-tooltip medicine hidden" id="medicine-tooltip">
+			<p><strong>Clinical medicine</strong> papers rarely cite, or are cited by, other disciplines, perhaps because they deal with specialized medical practice.</p>
+		</div>
+		<div class="widget-tooltip health hidden" id="health-tooltip">
+			<p><strong>Health</strong> seems very interdisciplinary because it incorporates broad ­fields such as public health and social aspects of medicine.</p>
+		</div>
 		<div class="widget-tooltip hidden" id="widget-tooltip">
 			<p id="name"></p>
 			<p>References: <span id="ref">0</span></p>
@@ -739,6 +754,30 @@ BuildWidget.prototype.buildTooltip = function() {
 		})
 		.on("mouseout", function (d) {
 			self.hideTooltip();
+		});
+
+	console.log(this.params.width);
+
+	d3.select("#health-tooltip")
+		.style("top",  (self.yScale(85) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(55) + this.params.margin.right) + "px")
+		.classed("hidden", function () {
+			if (self.data.year === 50 && self.params.width > 500) {
+				return false;
+			} else {
+				return true;
+			}
+		});
+
+	d3.select("#medicine-tooltip")
+		.style("top",  (self.yScale(25) + this.params.margin.top) + "px")
+		.style("right", (self.xScale(5) + this.params.margin.right) + "px")
+		.classed("hidden", function () {
+			if (self.data.year === 50 && self.params.width > 500) {
+				return false;
+			} else {
+				return true;
+			}
 		});
 };
 
