@@ -1,4 +1,8 @@
-#Interactive graphic for @NatureNews
+# Indirect costs: Keeping the lights on
+
+Interactive graphic for @NatureNews
+
+Published online: http://www.nature.com/news/indirect-costs-keeping-the-lights-on-1.16376#/interactive
 
 Built with [d3.js](http://d3js.org/).
 
