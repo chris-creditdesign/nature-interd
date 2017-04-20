@@ -1,7 +1,6 @@
 (function() {
-	var d3url = "http://www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
-	// var dataurl = "http://www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
-	var dataurl = "data/interd-data.csv";
+	var d3url = "//www.nature.com/widget_assets_polopoly/v518n7538/d3.v3.min.js";
+	var dataurl = "//www.nature.com/widget_assets_polopoly/v525n7569/interd-data.csv";
 
 	var init = function($) {
 		/*	Load D3 */
